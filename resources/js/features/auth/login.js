@@ -1,4 +1,4 @@
-
+import { login_schema } from "@/core/lib/schema";
 import { supabase } from "@/core/lib/supabase";
 
 export function init_login() {
@@ -12,12 +12,23 @@ export function init_login() {
         e.preventDefault();
 
         const form_data = new FormData(form);
-        const email = form_data.get("email");
-        const password = form_data.get("password");
+        // Uses Zod schema to validate raw user input
+        const raw = {
+            email: form_data.get("email"),
+            password: form_data.get("password"),
+        };
 
         error_el.classList.add("hidden");
         error_el.textContent = "";
-
+        const parsed = login_schema.safeParse(raw); // validate raw input if it follows login_schema rules
+        
+        if (!parsed.success) {
+            const first_error = parsed.error.issues[0].message;
+            error_el.textContent = first_error;
+            error_el.classList.remove("hidden");
+            return;
+        }
+        const { email, password } = parsed.data;
         button.disabled = true;
         button.textContent = "Signing in...";
 
@@ -31,7 +42,7 @@ export function init_login() {
 
             window.location.href = "/dashboard";
         } catch (err) {
-            error_el.textContent = err.message || "Login failed";
+            error_el.textContent = "Invalid email or password";
             error_el.classList.remove("hidden");
         } finally {
             button.disabled = false;
