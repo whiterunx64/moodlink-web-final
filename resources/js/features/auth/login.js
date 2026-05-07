@@ -23,8 +23,12 @@ export function init_login() {
         const parsed = login_schema.safeParse(raw); // validate raw input if it follows login_schema rules
         
         if (!parsed.success) {
-            const first_error = parsed.error.issues[0].message;
-            error_el.textContent = first_error;
+            const errorDivs = parsed.error.issues.map(({ message}) => {
+                const div = document.createElement("div");
+                div.textContent = `• ${message}`;
+                return div;
+            });
+            error_el.replaceChildren(...errorDivs);
             error_el.classList.remove("hidden");
             return;
         }
