@@ -8,13 +8,13 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ResolvePageTitle
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  Closure(Request): (Response)  $next
-     */
+    protected array $titles = [
+        'dashboard' => 'Dashboard',
+    ];
     public function handle(Request $request, Closure $next): Response
     {
+        $route = $request->route()?->getName() ?? '';
+        view()->share('title', $this->titles[$route] ?? 'Dashboard');
         return $next($request);
     }
 }
