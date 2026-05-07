@@ -1,8 +1,5 @@
-.login-card {
-  box-shadow: 0 8px 40px rgba(0,0,0,0.18);
-}
-
-input:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(90,122,46,0.3);
+@layer components {
+    .login-card {
+        box-shadow: 0 8px 40px rgba(0, 0, 0, 0.18);
+    }
 }

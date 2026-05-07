@@ -4,13 +4,13 @@
 
 @section('content')
 
-  <h1 class="text-white text-3xl font-bold mb-6 fade-up fade-up-1">
+  <h1 class="text-white text-3xl sm:text-4xl font-bold mb-6 fade-up fade-up-1">
     Moodlink
   </h1>
 
   <x-card class="fade-up fade-up-2">
 
-    <h2 class="text-ml-text text-2xl font-bold text-center mb-7">
+    <h2 class="text-ml-text text-2xl sm:text-3xl font-bold text-center mb-6">
       Login
     </h2>
 
@@ -30,7 +30,7 @@
 
         <p id="js-login-error" class="text-red-600 text-xs font-semibold hidden"></p>
 
-        <x-button id="login-btn" type="submit" class="fade-up fade-up-4 mt-2">
+        <x-button id="login-btn" type="submit" class="fade-up fade-up-5 mt-2">
           Sign In
         </x-button>
 
