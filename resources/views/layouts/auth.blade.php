@@ -11,11 +11,9 @@
   @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="bg-ml-bg min-h-screen flex items-center justify-center overflow-hidden relative">
+<body class="bg-ml-bg min-h-screen flex items-center justify-center p-4 sm:p-8 overflow-hidden relative">
 
-  <x-heart-shape />
-  <x-bubble-shape />
-
+  <x-background-shapes />
   <div class="relative z-10 flex flex-col items-center">
     @yield('content')
   </div>
