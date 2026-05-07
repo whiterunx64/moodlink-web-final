@@ -17,16 +17,16 @@
       <div class="w-7 h-7 rounded-full bg-accent text-white flex items-center justify-center text-xs font-bold">
         {{ $initial }}
       </div>
-      <h4 class="font-semibold text-[var(--color-text-dark)] text-sm">
+      <h4 class="font-semibold text-text-dark text-sm">
         {{ $name }}
       </h4>
     </div>
-    <span class="text-xs text-[var(--color-text-muted)]">
+    <span class="text-xs text-text-muted">
       {{ $time }}
     </span>
   </div>
 
-<p class="text-sm text-[var(--color-text-muted)] leading-relaxed">
+<p class="text-sm text-text-muted leading-relaxed">
     {{ $message }}
 </p>
 

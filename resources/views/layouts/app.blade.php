@@ -56,7 +56,7 @@
           <p id="realtime-clock" class="text-sm text-text-muted"></p>
         </div>
 
-        <div class="text-sm text-text-muted">Admin</div> **/
+        <div class="text-sm text-text-muted">Admin</div>
       </header>
 
       <div class="flex-1 overflow-y-auto p-8 scroll-hide">

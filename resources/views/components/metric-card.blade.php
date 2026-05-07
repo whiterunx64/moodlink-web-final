@@ -7,10 +7,10 @@
 ])
 @php
   $bg = match ($color) {
-    'green' => 'bg-[var(--color-card-green)]',
-    'red' => 'bg-[var(--color-card-red)]',
-    'blue' => 'bg-[var(--color-card-blue)]',
-    default => 'bg-[var(--color-card-orange)]',
+    'green' => 'bg-card-green',
+    'red' => 'bg-card-red',
+    'blue' => 'bg-card-blue',
+    default => 'bg-card-orange',
   };
 @endphp
 

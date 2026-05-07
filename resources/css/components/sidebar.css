@@ -1,12 +1,14 @@
-.sidebar-item {
-    transition: all 0.2s ease;
-}
+@layer components {
+    .sidebar-item {
+        transition: all 0.2s ease;
+    }
 
-.sidebar-item:hover {
-    background-color: var(--color-sidebar-hover);
-}
+    .sidebar-item:hover {
+        background-color: var(--color-sidebar-hover);
+    }
 
-.sidebar-item.active {
-    background-color: var(--color-accent);
-    color: var(--color-sidebar);
+    .sidebar-item.active {
+        background-color: var(--color-accent);
+        color: var(--color-sidebar);
+    }
 }
