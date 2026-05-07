@@ -1,0 +1,48 @@
+.heart {
+  position: absolute;
+  top: -30px;
+  left: -60px;
+  width: 340px;
+  height: 340px;
+  background: var(--color-ml-heart);
+  border-radius: 50% 50% 0 0;
+  transform: rotate(-45deg);
+  opacity: 0.55;
+}
+
+.heart::before,
+.heart::after {
+  content: '';
+  position: absolute;
+  width: 340px;
+  height: 340px;
+  background: var(--color-ml-heart);
+  border-radius: 50%;
+}
+
+.heart::before {
+  top: -170px;
+}
+
+.heart::after {
+  left: 170px;
+}
+
+.bubble {
+  position: absolute;
+  width: 220px;
+  height: 200px;
+  background: var(--color-ml-bubble);
+  border-radius: 24px;
+  opacity: 0.65;
+}
+
+.bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -36px;
+  left: 32px;
+  border-left: 24px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 38px solid var(--color-ml-bubble);
+}
