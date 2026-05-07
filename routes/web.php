@@ -5,4 +5,4 @@ use App\Http\Controllers\Auth\LoginController;
 // Route::get('/', function () {
 //    return view('welcome');
 //});
-Route::get('/login', [LoginController::class, 'show_login'])->name('login');
+Route::get('/', [LoginController::class, 'show_login'])->name('login');
