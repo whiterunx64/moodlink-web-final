@@ -1,4 +1,4 @@
-<div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100">
+<x-card variant="panel" class="lg:col-span-2">
 
   <x-card-header icon="fa-file-alt" title="MoodSpace" subtitle="March 10, 2026" />
 
@@ -19,4 +19,4 @@
 
   </div>
 
-</div>
+</x-card>
