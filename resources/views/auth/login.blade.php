@@ -30,7 +30,7 @@
 
         <p id="js-login-error" class="text-red-600 text-xs font-semibold hidden"></p>
 
-        <x-button id="login-btn" type="submit" class="fade-up fade-up-5 mt-2">
+        <x-button id="login-btn" type="submit" class="fade-up fade-up-5 mt-2" size="full" variant="signIn">
           Sign In
         </x-button>
 
