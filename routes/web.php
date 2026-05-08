@@ -6,3 +6,7 @@ use App\Http\Controllers\Auth\LoginController;
 //    return view('welcome');
 //});
 Route::get('/', [LoginController::class, 'show_login'])->name('login');
+
+Route::get('/dashboard', function () {
+    return view('dashboard.index');
+})->name('dashboard');
