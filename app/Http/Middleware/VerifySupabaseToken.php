@@ -5,65 +5,56 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Lcobucci\JWT\Configuration;
-use Lcobucci\JWT\Signer\Hmac\Sha256;
-use Lcobucci\JWT\Signer\Key\InMemory;
-use Lcobucci\JWT\Validation\Constraint\SignedWith;
-use Lcobucci\JWT\Validation\Constraint\LooseValidAt;
-use Lcobucci\Clock\SystemClock;
-use DateTimeZone;
-
-
+use Illuminate\Support\Facades\Http;
+// use Illuminate\Support\Facades\Log;
 class VerifySupabaseToken
 {
     public function handle(Request $request, Closure $next): Response
     {
         $token = $request->bearerToken() ?? $request->input('access_token');
 
+// token request checker
+//       Log::info('Incoming request', [
+//            'token_present' => $token ? true : false,
+//        ]);
+
         if (!$token) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
         try {
-            $jwt = $this->verify($token);
-            $claims = $jwt->claims();
-            $role = $claims->get('role');
+            $supabase_url = config('services.supabase.url');
+            $supabase_key = config('services.supabase.service_key');
 
-            if ($role !== 'authenticated') {
-                return response()->json(['message' => 'Unauthorized role'], 403);
+            $response = Http::withHeaders([
+                'Authorization' => "Bearer {$token}",
+                'apikey'        => $supabase_key,
+            ])->get("{$supabase_url}/auth/v1/user");
+
+            if (!$response->successful()) {
+                \Log::error('Supabase token check failed', ['body' => $response->body()]);
+                return response()->json(['error' => 'Unauthorized'], 401);
             }
+// check if cred exist in supabase auth
+//            Log::info('Supabase response', [
+//                'status' => $response->status(),
+//                'body' => $response->json(),
+//            ]);
+
+            $user = $response->json();
 
             $request->attributes->set('supabase_user', [
-                'id' => $claims->get('sub'),
-                'email' => $claims->get('email'),
-                'role' => $role,
-                'metadata' => $claims->get('app_metadata', []),
+                'id'       => $user['id'] ?? null,
+                'email'    => $user['email'] ?? null,
+                'role'     => $user['role'] ?? 'authenticated',
+                'metadata' => $user['app_metadata'] ?? [],
             ]);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Invalid token or expired token'], 401);
-        }
+
+            } catch (\Exception $e) {
+                \Log::error('JWT verify failed', ['message' => $e->getMessage()]);
+                return response()->json(['error' => 'Invalid or expired token'], 401);
+            }
         //$claims = $jwt->claims();
         return $next($request);
-    }
-    private function verify(string $token)
-    {
-        $secret = config('services.supabase.jwt_secret');
-        if (empty($secret)) {
-            throw new \RuntimeException('Supabase JWT secret is not configured.');
-        }
-
-        $config = Configuration::forSymmetricSigner(
-            new Sha256(),
-            InMemory::plainText($secret)
-        );
-        $config->setValidationConstraints(
-            new SignedWith($config->signer(), $config->signingKey()),
-            new LooseValidAt(new SystemClock(new DateTimeZone('UTC')))
-        );
-
-        $parsed = $config->parser()->parse($token);
-        $config->validator()->assert($parsed, ...$config->validationConstraints());
-
-        return $parsed;
     }
 }
