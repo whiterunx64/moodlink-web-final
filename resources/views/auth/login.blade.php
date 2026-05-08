@@ -8,7 +8,7 @@
     Moodlink
   </h1>
 
-  <x-card class="fade-up fade-up-2">
+  <x-card class="fade-up fade-up-2" variant="login">
 
     <h2 class="text-ml-text text-2xl sm:text-3xl font-bold text-center mb-6">
       Login
@@ -30,11 +30,7 @@
 
         <p id="js-login-error" class="text-red-600 text-xs font-semibold hidden"></p>
 
-<<<<<<< HEAD
-        <x-button id="login-btn" type="submit" class="fade-up fade-up-5 mt-2" size="full" variant="signIn">
-=======
         <x-button id="login-btn" type="submit" class="fade-up fade-up-5 mt-2">
->>>>>>> feature/dashboard
           Sign In
         </x-button>
 
