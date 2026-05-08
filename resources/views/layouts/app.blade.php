@@ -52,7 +52,7 @@
         </button>
 
         <div>
-          <h2 id="page-title" class="text-2xl font-bold text-text-dark">Dashboard</h2>
+          <h2 class="text-2xl font-bold text-text-dark">{{ $title }}</h2>
           <p id="realtime-clock" class="text-sm text-text-muted"></p>
         </div>
 
