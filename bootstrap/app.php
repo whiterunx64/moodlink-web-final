@@ -12,7 +12,11 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [\App\Http\Middleware\ResolvePageTitle::class,]);
-        //
+        // alias Supabase JWT verify middleware
+        $middleware->alias([ 
+            'supabase.token' => \App\Http\Middleware\VerifySupabaseToken::class,
+            'admin.session'  => \App\Http\Middleware\AuthorizeAdminSession::class,
+            ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

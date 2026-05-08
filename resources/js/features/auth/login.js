@@ -37,13 +37,29 @@ export function init_login() {
         button.textContent = "Signing in...";
 
         try {
-            const { error } = await supabase.auth.signInWithPassword({
+            const {data, error } = await supabase.auth.signInWithPassword({
                 email,
                 password,
             });
 
             if (error) throw error;
-
+            // After Successful sign in, request backend to create session cookie
+            const res = await fetch("/auth/session", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${data.session.access_token}`,
+                    "X-CSRF-TOKEN": document
+                        .querySelector('meta[name="csrf-token"]')
+                        ?.getAttribute("content") ?? "",
+                },
+            });
+            // TODO implement logging for failed session requests, tracking system activity TODO
+            if (!res.ok) {
+                const payload = await res.json().catch(() => ({}));
+                throw new Error(payload.message ?? "Session creation failed");
+            }
+            console.log("Login success"); // DEBOGER
             window.location.href = "/dashboard";
         } catch (err) {
             error_el.textContent = "Invalid email or password";
