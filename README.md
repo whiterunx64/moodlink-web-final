@@ -1,58 +1,54 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+## High-Level View of How Authentication Works in the System
+ 
+shows how the Supabase handles login, how Laravel verifies the token, and how the laravel session is created and kept using cookies.
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+---
 
-## About Laravel
+### Overall Authentication Flow
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+<img width="1512" height="1424" alt="High-Level Auth Flow" src="https://github.com/user-attachments/assets/1704fa33-1dbd-494b-9770-c311fc542b78" />
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Frontend Login Flow
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+The frontend starts the login process and handles user input.
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+- Reads email and password from the form  
+- Validates input using Zod  
+- Sends credentials to Supabase  
+- Receives a JWT access token on success  
+- Sends the token to the backend to start a session  
 
-## Agentic Development
+<img width="1258" height="1678" alt="Frontend Login Flow" src="https://github.com/user-attachments/assets/a0bcbf36-9f7c-4d82-ba95-d959b9683e3e" />
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+---
 
-```bash
-composer require laravel/boost --dev
+### Middleware: VerifySupabaseToken
 
-php artisan boost:install
-```
+This middleware checks if the incoming token is valid before continuing.
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+- Gets the token from the request  
+- Sends it to Supabase `/auth/v1/user`  
+- Confirms if the token is valid  
+- Reads user data from the response  
+- Attaches the user data to the request  
+- Blocks the request if the token is invalid  
 
-## Contributing
+<img width="1646" height="1854" alt="Token Verification Middleware" src="https://github.com/user-attachments/assets/cf166b45-de7e-43dd-bef6-ba364a69275e" />
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+### Controller: Laravel Session Establishment
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+After verification, the backend creates a session.
 
-## Security Vulnerabilities
+- Reads user data from the middleware  
+- Regenerates the session ID  
+- Stores user data in the session  
+- Sends back a `laravel_session` cookie  
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+<img width="1104" height="1678" alt="Session Controller Flow" src="https://github.com/user-attachments/assets/471aca21-34a6-4f7e-86b0-d5965a68eaed" />
