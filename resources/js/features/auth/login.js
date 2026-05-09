@@ -54,11 +54,6 @@ export function init_login() {
                     },
                 },
             );
-            console.log("axios response:", res.status, res.data);
-            //const payload = await res.json().catch(() => ({})); DEBOGER
-            //console.log("check crafted payload: ", payload); DEBOGER
-            // TODO implement logging for failed session requests, tracking system activity TODO
-            //console.log("Login success"); // DEBOGER
             window.location.href = "/dashboard";
         } catch (err) {
             error_el.textContent = "Invalid email or password";
