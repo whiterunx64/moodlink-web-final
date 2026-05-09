@@ -10,5 +10,19 @@
   --color-ml-text: #2a2a2a;
   --color-ml-placeholder: #9a9a8a;
 
+  --color-sidebar: #4a5d2a;
+  --color-sidebar-hover: #5a6d3a;
+  --color-accent: #d4c96a;
+  --color-bg-main: #f5f5f0;
+  --color-text-muted: #888888;
+  --color-text-dark: #333333;
+  --color-btn-green: #5a7d3a;
+
+  /* METRICS CARD */
+  --color-card-orange: #d4954a;
+  --color-card-green: #6aaa6a;
+  --color-card-red: #c95a5a;
+  --color-card-blue: #5a8ad4;
+  
   --font-sans: 'Inter', sans-serif;
 }
