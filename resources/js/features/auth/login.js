@@ -1,3 +1,4 @@
+import axios from "axios";
 import { login_schema } from "@/core/lib/schema";
 import { supabase } from "@/core/lib/supabase";
 
@@ -21,14 +22,14 @@ export function init_login() {
         error_el.classList.add("hidden");
         error_el.textContent = "";
         const parsed = login_schema.safeParse(raw); // validate raw input if it follows login_schema rules
-        
+
         if (!parsed.success) {
-            const errorDivs = parsed.error.issues.map(({ message}) => {
+            const error_divs = parsed.error.issues.map(({ message }) => {
                 const div = document.createElement("div");
                 div.textContent = `• ${message}`;
                 return div;
             });
-            error_el.replaceChildren(...errorDivs);
+            error_el.replaceChildren(...error_divs);
             error_el.classList.remove("hidden");
             return;
         }
@@ -37,32 +38,28 @@ export function init_login() {
         button.textContent = "Signing in...";
 
         try {
-            const {data, error } = await supabase.auth.signInWithPassword({
+            const { data, error } = await supabase.auth.signInWithPassword({
                 email,
                 password,
             });
 
             if (error) throw error;
             // After Successful sign in, request backend to create session cookie
-            const res = await fetch("/auth/session", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${data.session.access_token}`,
-                    "X-CSRF-TOKEN": document
-                        .querySelector('meta[name="csrf-token"]')
-                        ?.getAttribute("content") ?? "",
+            await axios.post(
+                "/auth/session",
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${data.session.access_token}`,
+                    },
                 },
-            });
+            );
+            console.log("axios response:", res.status, res.data);
             //const payload = await res.json().catch(() => ({})); DEBOGER
             //console.log("check crafted payload: ", payload); DEBOGER
             // TODO implement logging for failed session requests, tracking system activity TODO
-            if (!res.ok) {
-                const payload = await res.json().catch(() => ({}));
-                throw new Error(payload.message ?? "Session creation failed");
-            }
             //console.log("Login success"); // DEBOGER
-            window.location.href = "/dashboard";
+            //window.location.href = "/dashboard";
         } catch (err) {
             error_el.textContent = "Invalid email or password";
             error_el.classList.remove("hidden");
