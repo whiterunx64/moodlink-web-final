@@ -14,7 +14,12 @@
 
 <body class="bg-ml-bg min-h-screen flex items-center justify-center p-4 sm:p-8 overflow-hidden relative">
 
-  <x-background-shapes />
+  <div class="heart-wrapper">
+    <div class="heart"></div>
+  </div>
+  <div class="bubble-wrapper">
+    <div class="bubble"></div>
+  </div>
   <div class="relative z-10 flex flex-col items-center">
     @yield('content')
   </div>

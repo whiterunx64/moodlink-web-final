@@ -12,21 +12,22 @@
 </head>
 
 <body class="bg-bg-main min-h-screen">
-  <div class="flex h-screen">
+  <div class="flex min-h-screen" x-data="{ sidebarOpen: false }" @keydown.escape.window="sidebarOpen = false">
 
     <!-- Mobile Overlay -->
-    <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-20 lg:hidden hidden"></div>
+    <div @click="sidebarOpen = false" class="fixed inset-0 bg-black/50 z-20 lg:hidden transition-opacity duration-300"
+      :class="sidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'"></div>
 
     <!-- Sidebar -->
-    <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-30
+    <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" :aria-hidden="(!sidebarOpen).toString()" class="fixed lg:static inset-y-0 left-0 z-30
              w-64 bg-sidebar text-white flex flex-col flex-shrink-0
-             -translate-x-full lg:translate-x-0
-             transition-transform duration-300 ease-in-out">
+             lg:translate-x-0 transition-transform duration-300 ease-in-out">
 
       <div class="p-6 flex items-center justify-between">
         <h1 class="text-2xl font-bold text-accent">MoodLink</h1>
-        <button id="sidebar-close" class="lg:hidden text-white/80 hover:text-white">
-          <i class="fas fa-times"></i>
+        <button @click="sidebarOpen = false" class="lg:hidden text-white/80 hover:text-white"
+          aria-label="Close sidebar">
+          <i class="fas fa-times text-2xl"></i>
         </button>
       </div>
 
@@ -47,7 +48,8 @@
     <main class="flex-1 flex flex-col overflow-hidden">
       {{-- TODO: unfinished header function --}}
       <header class="bg-white border-b border-gray-200 px-8 py-4 flex justify-between items-center">
-        <button id="sidebar-open" class="lg:hidden text-gray-500 hover:text-gray-700">
+        <button @click="sidebarOpen = true" :aria-expanded="sidebarOpen.toString()"
+          class="lg:hidden text-gray-500 hover:text-gray-700" aria-label="Open sidebar">
           <i class="fas fa-bars text-xl"></i>
         </button>
 
