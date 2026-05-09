@@ -13,7 +13,7 @@ class VerifySupabaseToken
     {
         $token = $request->bearerToken() ?? $request->input('access_token');
 
-// token request checker
+// token request checker  DEBOGER
 //       Log::info('Incoming request', [
 //            'token_present' => $token ? true : false,
 //        ]);
@@ -32,10 +32,10 @@ class VerifySupabaseToken
             ])->get("{$supabase_url}/auth/v1/user");
 
             if (!$response->successful()) {
-                \Log::error('Supabase token check failed', ['body' => $response->body()]);
+//                \Log::error('Supabase token check failed', ['body' => $response->body()]); DEBOGER
                 return response()->json(['error' => 'Unauthorized'], 401);
             }
-// check if cred exist in supabase auth
+// check if cred exist in supabase auth  DEBOGER
 //            Log::info('Supabase response', [
 //                'status' => $response->status(),
 //                'body' => $response->json(),

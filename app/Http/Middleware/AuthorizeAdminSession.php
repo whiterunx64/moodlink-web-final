@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AuthorizeAdminSession
 {
-    private const IDLE_TIMEOUT = 1; // session idle limit
+    private const IDLE_TIMEOUT = 1; // session idle limit // Debugor checks if csrf resets
     public function handle(Request $request, Closure $next): Response
     {
 

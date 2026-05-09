@@ -23,7 +23,7 @@ class SessionController extends Controller
         $request->session()->put([
             'admin_id' => $user['id'],
             'admin_email' => $user['email'],
-            'admin_role' => $user['role'],
+            'admin_role' => $user['role'], // TODO: RBAC in progress
             'admin_meta' => $user['metadata'],
             'last_activity' => time(),
             'logged_in_at' => time(),

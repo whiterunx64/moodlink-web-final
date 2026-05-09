@@ -54,15 +54,15 @@ export function init_login() {
                         ?.getAttribute("content") ?? "",
                 },
             });
-            const payload = await res.json().catch(() => ({}));
-            console.log("check crafted payload: ", payload);
+            //const payload = await res.json().catch(() => ({})); DEBOGER
+            //console.log("check crafted payload: ", payload); DEBOGER
             // TODO implement logging for failed session requests, tracking system activity TODO
             if (!res.ok) {
                 const payload = await res.json().catch(() => ({}));
                 throw new Error(payload.message ?? "Session creation failed");
             }
-            console.log("Login success"); // DEBOGER
-// temporary disable for checking log            window.location.href = "/dashboard";
+            //console.log("Login success"); // DEBOGER
+            window.location.href = "/dashboard";
         } catch (err) {
             error_el.textContent = "Invalid email or password";
             error_el.classList.remove("hidden");
