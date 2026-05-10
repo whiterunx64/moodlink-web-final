@@ -7,3 +7,4 @@
 ## How the Module Works
 
 - [View Auth Module Documentation](https://github.com/whiterunx64/moodlink-web-final/blob/module/auth/README.md)
+- [View Dashboard Module Documentation](https://github.com/whiterunx64/moodlink-web-final/blob/module/dashboard/README.md)
