@@ -16,3 +16,19 @@ export const login_schema = z.object({
         .min(8, "Password must be at least 8 characters")
         .max(128, "Password is too long"),
 });
+// Zod schema post & students DB supabase
+export const dashboard_moodspace_schema = z.object({
+    // fields from post table
+    id: z.number(),
+    mood: z.string().nullable(),
+    content: z.string(),
+    datetime: z.string(),
+    status: z.string(),
+    // required fields from students table connected to post table
+    students: z.object({ 
+        anonymous_name: z.string().nullable(),
+        first_name: z.string(),
+        last_name: z.string(),
+        // removed        is_deactivated: z.boolean(),
+    }),
+});
