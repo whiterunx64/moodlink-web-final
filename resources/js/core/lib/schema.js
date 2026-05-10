@@ -32,3 +32,10 @@ export const dashboard_moodspace_schema = z.object({
         // removed        is_deactivated: z.boolean(),
     }),
 });
+// Zod schema posts, students & appointments DB supabase
+export const dashboard_metrics_schema = z.object({
+    logs: z.number().int().nonnegative(),
+    students: z.number().int().nonnegative(),
+    flagged: z.number().int().nonnegative(),
+    requests: z.number().int().nonnegative(),
+});
