@@ -12,9 +12,12 @@
 ---
 
 ## How it works ?
-
-`Mood space`
-
-<img width="1220" height="1180" alt="image" src="https://github.com/user-attachments/assets/fa3df29c-f4c3-4ddb-a9de-f83bb857c78f" />
+### Supabase realtime channel
+`Mood space` 
+##### INCOMPLETE
+- not enough arbitrary student data
+- no daily refresh
+- no date filtering
+<img width="500" alt="image" src="https://github.com/user-attachments/assets/fa3df29c-f4c3-4ddb-a9de-f83bb857c78f" />
 
 ---
