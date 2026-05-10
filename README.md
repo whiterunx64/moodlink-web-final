@@ -4,7 +4,7 @@ shows how the Supabase handles login, how Laravel verifies the token, and how th
 
 ---
 
-### Overall Authentication Flow
+### Hybrid Architecture Communication Sequence Between Three Systems
 
 
 <img width="1512" height="1424" alt="High-Level Auth Flow" src="https://github.com/user-attachments/assets/1704fa33-1dbd-494b-9770-c311fc542b78" />
