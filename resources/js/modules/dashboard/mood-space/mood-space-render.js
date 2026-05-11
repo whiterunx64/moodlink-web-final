@@ -84,9 +84,13 @@ export function build_moodspace_node(moodspace) {
 
 export function build_moodspace_loading_node() {
     const root = document.createElement("div");
-    root.className = "bg-gray-50 rounded-lg p-4 mood-entry-item animate-pulse";
+    root.className =
+        "bg-gray-100 rounded-lg p-4 mood-entry-item relative overflow-hidden animate-pulse";
     root.setAttribute("aria-hidden", "true");
     root.dataset.type = "loading";
+
+    const shimmer = document.createElement("div");
+    shimmer.className = "absolute inset-0 shimmer-layer";
 
     const header = document.createElement("div");
     header.className = "flex justify-between items-start mb-2";
@@ -95,32 +99,41 @@ export function build_moodspace_loading_node() {
     left.className = "flex items-center gap-2";
 
     const avatar = document.createElement("div");
-    avatar.className = "w-7 h-7 rounded-full bg-gray-200";
+    avatar.className =
+        "w-7 h-7 rounded-full bg-gray-300 bounce-soft";
 
     const name = document.createElement("div");
-    name.className = "h-3 w-24 bg-gray-200 rounded";
+    name.className =
+        "h-3 w-24 bg-gray-300 rounded bounce-soft";
 
     left.appendChild(avatar);
     left.appendChild(name);
 
     const time = document.createElement("div");
-    time.className = "h-3 w-10 bg-gray-200 rounded";
+    time.className =
+        "h-3 w-10 bg-gray-300 rounded bounce-soft";
 
     header.appendChild(left);
     header.appendChild(time);
 
     const line1 = document.createElement("div");
-    line1.className = "h-3 w-full bg-gray-200 rounded mb-2 mt-3";
+    line1.className =
+        "h-3 w-full bg-gray-300 rounded mb-2 mt-3 bounce-soft";
 
-    const line2 = document.createElement("div");
-    line2.className = "h-3 w-2/3 bg-gray-200 rounded";
+    
+const line2 = document.createElement("div");
+line2.className =
+    "inline-block mt-2 h-5 w-16 bg-gray-300 rounded-md bounce-soft";
+
 
     root.appendChild(header);
     root.appendChild(line1);
     root.appendChild(line2);
+    root.appendChild(shimmer);
 
     return root;
 }
+
 
 // 3 BUILDS AN EMPTY STATE NODE
 

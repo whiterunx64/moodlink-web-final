@@ -1,4 +1,5 @@
 import { supabase } from "@/core/lib/supabase";
+import { apply_today_range } from "@/core/lib/date"; // time helper
 import { dashboard_moodspace_schema } from "@/core/lib/schema";
 import {
     get_container,
@@ -17,19 +18,13 @@ export function moodspace_query() {
 export async function get_moodspace_data(query) {
     const { data, error } = await query;
     if (error) return [];
-
     const rows = Array.isArray(data) ? data : data ? [data] : [];
-    // DEBOGGER student data timestamp iso
-    //rows.forEach((r) => console.log("[datetime]", r.datetime));
-    // DEBOGGER supabase query checker
-    //const parsed = rows.map((r) => dashboard_moodspace_schema.safeParse(r));
-    //console.log("json:", parsed);
     return rows
         .map((r) => dashboard_moodspace_schema.safeParse(r))
-        .filter((r) => r.success)
-        .map((r) => r.data);
+        .filter((r) => r.success) // discard invalid payloads
+        .map((r) => r.data); 
 }
-
+// render skeleton UI
 export async function load_moodspace_feed() {
     const c = get_container();
     if (!c) return;
@@ -40,7 +35,9 @@ export async function load_moodspace_feed() {
         .forEach(() => c.appendChild(build_moodspace_loading_node()));
 
     const data = await get_moodspace_data(
-        moodspace_query().order("datetime", { ascending: false }),
+        apply_today_range(moodspace_query()).order("datetime", {
+            ascending: false,
+        }), // date.js wrap helper
     );
 
     c.innerHTML = "";
@@ -50,15 +47,12 @@ export async function load_moodspace_feed() {
         return;
     }
 
-    data.forEach((item) => {
-        c.appendChild(build_moodspace_node(item));
-    });
+    data.forEach((item) => c.appendChild(build_moodspace_node(item)));
 }
 
 export async function get_single_moodspace(id) {
     const data = await get_moodspace_data(
         moodspace_query().eq("id", id).limit(1),
     );
-
     return data[0] ?? null;
 }

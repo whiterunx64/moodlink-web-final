@@ -9,37 +9,56 @@ import {
 
 // CENTRALIZE WEBSOCKET
 
-let channel = null;
+let mood_channel = null;
+let metrics_channel = null;
 let metrics_timer = null;
-const debounce_ms = 200; // reduce multiple call in short period
+const debounce_ms = 100; // reduce multiple call in short period
 
-// websocket call debouncer
+// stop realtime on channel failure
+const on_channel_error = (status) => {
+    if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") stop_realtime();
+};
+
 function refresh_metrics() {
     clearTimeout(metrics_timer);
     metrics_timer = setTimeout(() => init_metrics(), debounce_ms);
 }
 
 export function start_realtime() {
-    if (channel) return channel; // only one active channel
-    channel = supabase.channel("dashboard");
-    channel
-        // posts — mood-space UI + metrics
+    if (mood_channel || metrics_channel) return; // only one active channel
+    // Mood Listener Submodule
+    mood_channel = supabase.channel("mood-space");
+    mood_channel
         .on(
             "postgres_changes",
             { event: "INSERT", schema: "public", table: "posts" },
             async ({ new: r }) => {
-                const data = await get_single_moodspace(r.id);
-                if (data) add_moodspace_item(data);
-                refresh_metrics();
+                try {
+                    const data = await get_single_moodspace(r.id);
+                    if (data) add_moodspace_item(data);
+                } catch (err) {
+                    console.error(
+                        "[realtime] INSERT failed for post",
+                        r.id,
+                        err,
+                    );
+                }
             },
         )
         .on(
             "postgres_changes",
             { event: "UPDATE", schema: "public", table: "posts" },
             async ({ new: r }) => {
-                const data = await get_single_moodspace(r.id);
-                if (data) replace_moodspace_item(data);
-                refresh_metrics();
+                try {
+                    const data = await get_single_moodspace(r.id);
+                    if (data) replace_moodspace_item(data);
+                } catch (err) {
+                    console.error(
+                        "[realtime] UPDATE failed for post",
+                        r.id,
+                        err,
+                    );
+                }
             },
         )
         .on(
@@ -47,31 +66,38 @@ export function start_realtime() {
             { event: "DELETE", schema: "public", table: "posts" },
             ({ old }) => {
                 if (old?.id) delete_moodspace_item(old.id);
-                refresh_metrics();
             },
         )
-        // students — metrics count, moodspace display names
+        .subscribe(on_channel_error);
+    // Metric Listener Submodule
+    metrics_channel = supabase.channel("metrics");
+    metrics_channel
+        .on(
+            "postgres_changes",
+            { event: "*", schema: "public", table: "posts" },
+            refresh_metrics,
+        )
         .on(
             "postgres_changes",
             { event: "*", schema: "public", table: "students" },
-            () => refresh_metrics(),
+            refresh_metrics,
         )
-        // appointments — metrics only
         .on(
             "postgres_changes",
             { event: "*", schema: "public", table: "appointments" },
-            () => refresh_metrics(),
+            refresh_metrics,
         )
-        .subscribe((status, err) => {
-            if (err) console.error("[realtime]", err.message);
-        });
-
-    return channel;
+        .subscribe(on_channel_error);
 }
 
 export async function stop_realtime() {
-    if (!channel) return; // channel protection
-    clearTimeout(metrics_timer);
-    await supabase.removeChannel(channel);
-    channel = null;
+    clearTimeout(metrics_timer); // stop pending refresh
+    if (mood_channel) {
+        await supabase.removeChannel(mood_channel);
+        mood_channel = null;
+    }
+    if (metrics_channel) {
+        await supabase.removeChannel(metrics_channel);
+        metrics_channel = null;
+    }
 }
