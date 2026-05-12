@@ -13,6 +13,8 @@ Subscription is established via api call `/realtime/v1/websocket`
 
 <img width="300"  alt="image" src="https://github.com/user-attachments/assets/9feead98-2c3e-466d-965e-a7b74178df9c" />
 
+`supabase-ws.js`
+
 #### posts
 - MoodSpace updates feed with student data (insert, update, delete)
 - Metrics counts logs and flagged posts (date-filtered)
@@ -44,8 +46,9 @@ Subscription is established via api call `/realtime/v1/websocket`
 `Mood space` 
 ##### INCOMPLETE
 - not enough arbitrary student data
-- no daily refresh
-- no date filtering
+- realtime feed via `supabase-ws.js`
+- daily refresh with midnight auto-reset
+- date filtering using admin's local timezone
 <img width="500" alt="image" src="https://github.com/user-attachments/assets/fa3df29c-f4c3-4ddb-a9de-f83bb857c78f" />
 
 ---
