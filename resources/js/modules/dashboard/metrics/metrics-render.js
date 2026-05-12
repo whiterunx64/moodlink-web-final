@@ -1,5 +1,5 @@
 // update UI metric values — hides skeleton, shows real value
-export function sync_metrics(data) {
+export function update_metrics_ui(data) {
     set_value("metric-logs", data.logs);
     set_value("metric-students", data.students);
     set_value("metric-flagged", data.flagged);

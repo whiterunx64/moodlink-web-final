@@ -12,7 +12,7 @@ export async function fetch_metrics() {
         apply_today_range(count_query("posts")),
         count_query("students"),
         apply_today_range(count_query("posts")).eq("status", "flagged"),
-        count_query("appointments").eq("status", "Pending"),
+        count_query("appointments"),
     ]);
 
     if (logsErr) console.error(logsErr);
