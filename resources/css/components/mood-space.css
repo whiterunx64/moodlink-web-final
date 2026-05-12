@@ -1,0 +1,87 @@
+/* ── 1. Entry card ───────────────────────── */
+@layer mood-entry {
+  .content-clamp {
+    font-size: 13px;
+    line-height: 1.6;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+  }
+}
+
+/* ── 2. Modal ────────────────────────────── */
+@layer mood-modal {
+  .ms-overlay { animation: ms-fade-in 140ms ease-out; }
+  .ms-modal   { animation: ms-slide-up 200ms cubic-bezier(0.22, 1, 0.36, 1); }
+}
+
+/* ── 5. Add (SMOOTH DROP) ────────────────── */
+@layer mood-add {
+  .ms-enter {
+    opacity: 0;
+    transform: translateY(-14px) scale(0.985);
+  }
+
+  .ms-enter-active {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    transition:
+      transform 380ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 240ms ease-out;
+  }
+}
+
+/* ── 6. Replace (SOFT MORPH) ─────────────── */
+@layer mood-replace {
+  .ms-exit {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.975);
+    transition:
+      transform 220ms ease-in,
+      opacity 180ms ease-in;
+  }
+
+  .ms-enter {
+    opacity: 0;
+    transform: translateY(10px) scale(0.975);
+  }
+
+  .ms-enter-active {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    transition:
+      transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 220ms ease-out;
+  }
+}
+
+/* ── 7. Delete (COLLAPSE + LIFT) ─────────── */
+@layer mood-delete {
+  .ms-exit-collapse {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.96);
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+
+    transition:
+      opacity 160ms ease,
+      transform 200ms ease,
+      height 300ms cubic-bezier(0.4, 0, 0.2, 1) 80ms,
+      margin 300ms ease 80ms,
+      padding 300ms ease 80ms;
+  }
+}
+
+/* ── Keyframes ───────────────────────────── */
+@keyframes ms-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes ms-slide-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
