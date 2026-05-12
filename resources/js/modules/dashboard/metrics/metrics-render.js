@@ -1,12 +1,12 @@
 // update UI metric values — hides skeleton, shows real value
-export function update_metrics_ui(data) {
-    set_value("metric-logs", data.logs);
-    set_value("metric-students", data.students);
-    set_value("metric-flagged", data.flagged);
-    set_value("metric-requests", data.requests);
+export function sync_metrics(data) {
+    update_card_value("metric-logs", data.logs);
+    update_card_value("metric-students", data.students);
+    update_card_value("metric-flagged", data.flagged);
+    update_card_value("metric-requests", data.requests);
 }
 
-function set_value(id, value) {
+function update_card_value(id, value) {
     const card = document.querySelector(`#${id}`);
     if (!card) return;
 

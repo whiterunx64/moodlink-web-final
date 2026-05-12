@@ -1,6 +1,6 @@
 import { supabase } from "@/core/lib/supabase";
 import { init_metrics } from "@/modules/dashboard/metrics";
-import { get_single_moodspace } from "@/modules/dashboard/mood-space/mood-space-fetch";
+import { fetch_single_post } from "@/modules/dashboard/mood-space/mood-space-fetch";
 import {
     add_moodspace_item,
     replace_moodspace_item,
@@ -34,7 +34,7 @@ export function start_realtime() {
             { event: "INSERT", schema: "public", table: "posts" },
             async ({ new: r }) => {
                 try {
-                    const data = await get_single_moodspace(r.id);
+                    const data = await fetch_single_post(r.id);
                     if (data) add_moodspace_item(data);
                 } catch (err) {
                     console.error(
@@ -50,7 +50,7 @@ export function start_realtime() {
             { event: "UPDATE", schema: "public", table: "posts" },
             async ({ new: r }) => {
                 try {
-                    const data = await get_single_moodspace(r.id);
+                    const data = await fetch_single_post(r.id);
                     if (data) replace_moodspace_item(data);
                 } catch (err) {
                     console.error(
