@@ -1,7 +1,7 @@
 <x-card variant="panel" class="lg:col-span-2">
+  {{-- Dynamically will know the time --}}
+  <x-card-header icon="fa-file-alt" title="MoodSpace" subtitle_id="moodspace-subtitle" />
 
-  <x-card-header icon="fa-file-alt" title="MoodSpace" subtitle="March 10, 2026" />
-
-  <div id="mood-space-feed" class="p-5 space-y-4 max-h-[400px] overflow-y-auto scroll-ui"></div>
+  <div id="mood-space-feed" class="p-5 space-y-4 max-h-[400px] overflow-y-auto scroll-ui flex flex-col"></div>
 
 </x-card>

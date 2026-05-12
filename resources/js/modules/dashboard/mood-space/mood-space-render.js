@@ -24,6 +24,14 @@ export function resolve_name(student, flagged) {
     return name || student?.anonymous_name || "Unknown";
 }
 
+export function format_today_label() {
+    return new Date().toLocaleDateString([], {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+    });
+    //always reflects today in the user's locale
+}
 
 // 1 BUILDS A MOOD ENTRY CARD NODE
 
@@ -99,32 +107,26 @@ export function build_moodspace_loading_node() {
     left.className = "flex items-center gap-2";
 
     const avatar = document.createElement("div");
-    avatar.className =
-        "w-7 h-7 rounded-full bg-gray-300 bounce-soft";
+    avatar.className = "w-7 h-7 rounded-full bg-gray-300 bounce-soft";
 
     const name = document.createElement("div");
-    name.className =
-        "h-3 w-24 bg-gray-300 rounded bounce-soft";
+    name.className = "h-3 w-24 bg-gray-300 rounded bounce-soft";
 
     left.appendChild(avatar);
     left.appendChild(name);
 
     const time = document.createElement("div");
-    time.className =
-        "h-3 w-10 bg-gray-300 rounded bounce-soft";
+    time.className = "h-3 w-10 bg-gray-300 rounded bounce-soft";
 
     header.appendChild(left);
     header.appendChild(time);
 
     const line1 = document.createElement("div");
-    line1.className =
-        "h-3 w-full bg-gray-300 rounded mb-2 mt-3 bounce-soft";
+    line1.className = "h-3 w-full bg-gray-300 rounded mb-2 mt-3 bounce-soft";
 
-    
-const line2 = document.createElement("div");
-line2.className =
-    "inline-block mt-2 h-5 w-16 bg-gray-300 rounded-md bounce-soft";
-
+    const line2 = document.createElement("div");
+    line2.className =
+        "inline-block mt-2 h-5 w-16 bg-gray-300 rounded-md bounce-soft";
 
     root.appendChild(header);
     root.appendChild(line1);
@@ -134,14 +136,25 @@ line2.className =
     return root;
 }
 
-
 // 3 BUILDS AN EMPTY STATE NODE
 
 export function build_moodspace_empty_node() {
     const el = document.createElement("div");
     el.id = "mood-space-empty";
-    el.className = "text-center py-10 text-text-muted text-sm";
-    el.textContent = "No mood entries yet.";
+    el.className =
+        "flex flex-col items-center justify-center h-full min-h-[200px] text-text-muted text-sm text-center gap-2";
+
+    const title = document.createElement("p");
+    title.className = "font-medium text-text-dark";
+    title.textContent = "No mood entries today";
+
+    const subtitle = document.createElement("p");
+    subtitle.className = "text-xs text-text-muted";
+    subtitle.textContent = "Students haven’t submitted any entries yet.";
+
+    el.appendChild(title);
+    el.appendChild(subtitle);
+
     return el;
 }
 
