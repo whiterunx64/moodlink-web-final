@@ -16,7 +16,8 @@ export function apply_today_range(query) {
     return query.gte("datetime", startISO).lt("datetime", endISO);
 }
 
-export function schedule_midnight_refresh(callback) {
+// Runs a callback when the next day starts
+export function schedule_daily_refresh(callback) {
     const now = new Date();
     const midnight = new Date(
         now.getFullYear(),
@@ -28,6 +29,6 @@ export function schedule_midnight_refresh(callback) {
 
     setTimeout(() => {
         callback();
-        schedule_midnight_refresh(callback);
+        data_daily_reset(callback);
     }, delay);
 }

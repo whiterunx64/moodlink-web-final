@@ -2,16 +2,16 @@ import { supabase } from "@/core/lib/supabase";
 import { apply_today_range } from "@/core/lib/date"; // time helper
 import { dashboard_moodspace_schema } from "@/core/lib/schema";
 import {
-    get_container,
+    get_moodspace_container,
     build_moodspace_node,
-    build_moodspace_loading_node,
+    build_skeleton_card,
     build_moodspace_empty_node,
     format_today_label,
 } from "@/modules/dashboard/mood-space/mood-space-render";
 
-let active_feed_controller = null; // abort control
+let active_posts_controller = null; // abort control
 
-export function moodspace_query() {
+export function create_moodspace_query() {
     return supabase.from("posts").select(`
         id, mood, content, datetime, status,
         students ( anonymous_name, first_name, last_name )
@@ -28,16 +28,16 @@ export async function get_moodspace_data(query) {
         .map((r) => r.data);
 }
 
-// 1 RENDER SKELETON UI
+// 1 RENDER MOODSPACE POSTS
 
-export async function load_moodspace_feed() {
-    const c = get_container();
+export async function load_moodspace_posts() {
+    const c = get_moodspace_container();
     if (!c) return;
 
     // abort any in-flight fetch
-    if (active_feed_controller) active_feed_controller.abort();
-    active_feed_controller = new AbortController();
-    const { signal } = active_feed_controller;
+    if (active_posts_controller) active_posts_controller.abort();
+    active_posts_controller = new AbortController();
+    const { signal } = active_posts_controller;
 
     const subtitle = document.getElementById("moodspace-subtitle");
     if (subtitle) subtitle.textContent = format_today_label();
@@ -45,11 +45,11 @@ export async function load_moodspace_feed() {
     c.replaceChildren();
     Array(3)
         .fill(null)
-        .forEach(() => c.appendChild(build_moodspace_loading_node()));
+        .forEach(() => c.appendChild(build_skeleton_card()));
 
     try {
         const data = await get_moodspace_data(
-            apply_today_range(moodspace_query()).order("datetime", {
+            apply_today_range(create_moodspace_query()).order("datetime", {
                 ascending: false, // newest posts first
             }),
         );
@@ -66,7 +66,7 @@ export async function load_moodspace_feed() {
         data.forEach((item) => c.appendChild(build_moodspace_node(item)));
     } catch (err) {
         if (signal.aborted) return; // expected, ignore
-        console.error("[moodspace] failed to load feed", err);
+        console.error("[moodspace] failed to load posts", err);
 
         c.replaceChildren();
         const error_node = document.createElement("div");
@@ -75,18 +75,19 @@ export async function load_moodspace_feed() {
         error_node.textContent = "Failed to load entries. Please try again.";
         c.appendChild(error_node);
     } finally {
-        active_feed_controller = null;
+        active_posts_controller = null;
     }
 }
 
 // 2 FETCH SINGLE MOODSPACE DATA
 
-export async function get_single_moodspace(id) {
+export async function fetch_single_post(id) {
     try {
-        const data = await get_moodspace_data(
-            moodspace_query().eq("id", id).limit(1),
+        const [row] = await get_moodspace_data(
+            create_moodspace_query().eq("id", id).limit(1),
         );
-        return data[0] ?? null;
+
+        return row ?? null;
     } catch (err) {
         console.error("[moodspace] failed to fetch single post", id, err);
         return null;
