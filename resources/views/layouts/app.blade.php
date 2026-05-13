@@ -12,8 +12,16 @@
 </head>
 
 <body class="bg-bg-main min-h-screen">
-  <div class="flex min-h-screen" x-data="{ sidebarOpen: false }" @keydown.escape.window="sidebarOpen = false">
-
+  <div class="flex min-h-screen"
+     x-data="{ sidebarOpen: false }"
+     x-init="
+        window.addEventListener('resize', () => {
+          if (window.innerWidth >= 1024) {
+            sidebarOpen = false;
+          }
+        });
+     "
+     @keydown.escape.window="sidebarOpen = false">
     <!-- Mobile Overlay -->
     <div @click="sidebarOpen = false" class="fixed inset-0 bg-black/50 z-20 lg:hidden transition-opacity duration-300"
       :class="sidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'"></div>

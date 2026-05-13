@@ -119,15 +119,16 @@ export function build_moodspace_node(moodspace) {
     return root;
 }
 
-// 3 BUILDS A SKELETON CARD NODE
+// 2 BUILDS A SKELETON CARD NODE
 
 export function build_skeleton_card() {
     const root = document.createElement("div");
     root.className =
-        "bg-gray-100 rounded-[10px] p-[14px_16px] w-full relative overflow-hidden animate-pulse";
+        "mood-entry-item bg-gray-100 rounded-[10px] p-[14px_18px] w-full relative overflow-hidden animate-pulse";
     root.setAttribute("aria-hidden", "true");
     root.dataset.type = "loading";
 
+    // header 
     const header = document.createElement("div");
     header.className = "flex justify-between items-center mb-[10px]";
 
@@ -137,14 +138,14 @@ export function build_skeleton_card() {
     const avatar = document.createElement("div");
     avatar.className = "w-7 h-7 shrink-0 rounded-full bg-gray-300";
 
-    // mirrors the real card's meta block (name + time stacked)
+    // mirrors the real card's meta block
     const meta = document.createElement("div");
 
     const name = document.createElement("div");
     name.className = "h-3 w-24 bg-gray-300 rounded";
 
     const time = document.createElement("div");
-    time.className = "h-2.5 w-10 bg-gray-300 rounded mt-1";
+    time.className = "h-2.5 w-16 bg-gray-300 rounded mt-px";
 
     meta.appendChild(name);
     meta.appendChild(time);
@@ -152,25 +153,31 @@ export function build_skeleton_card() {
     left.appendChild(meta);
     header.appendChild(left);
 
+    // optional badge placeholder 
     const badge = document.createElement("div");
-    badge.className = "h-5 w-14 bg-gray-300 rounded shrink-0";
+    badge.className = "h-5 w-14 bg-gray-200 rounded shrink-0";
     header.appendChild(badge);
 
+    // content 
     const line1 = document.createElement("div");
-    line1.className = "h-3 w-full bg-gray-300 rounded mt-1";
+    line1.className = "h-3 w-full bg-gray-300 rounded";
 
     const line2 = document.createElement("div");
-    line2.className = "h-3 w-3/4 bg-gray-300 rounded mt-2";
+    line2.className = "h-3 w-full bg-gray-300 rounded mt-2";
+
+    const line3 = document.createElement("div");
+    line3.className = "h-3 w-30 bg-gray-300 rounded mt-2";
 
     root.appendChild(header);
     root.appendChild(line1);
     root.appendChild(line2);
+    root.appendChild(line3);
 
     return root;
 }
 
 
-// 4 RETURNS THE EMPTY STATE NODE (rendered by Blade, with fallback)
+// 3 RETURNS THE EMPTY STATE NODE (rendered by Blade, with fallback)
 
 export function build_moodspace_empty_node() {
     const el = document.getElementById("mood-space-empty");
@@ -188,7 +195,7 @@ export function build_moodspace_empty_node() {
     return fallback;
 }
 
-// 5 PREPENDS A NODE TO THE POST
+// 4 PREPENDS A NODE TO THE POST
 
 export function add_moodspace_item(moodspace) {
     const c = get_moodspace_container();
@@ -210,7 +217,7 @@ export function add_moodspace_item(moodspace) {
     }, { once: true });
 }
 
-// 6 REPLACES A NODE IN THE POST
+// 5 REPLACES A NODE IN THE POST
 
 export function replace_moodspace_item(moodspace) {
     const c = get_moodspace_container();
@@ -239,7 +246,7 @@ export function replace_moodspace_item(moodspace) {
     }, { once: true });
 }
 
-// 7 REMOVES A NODE FROM THE POST
+// 6 REMOVES A NODE FROM THE POST
 
 export function delete_moodspace_item(id) {
     const c = get_moodspace_container();
