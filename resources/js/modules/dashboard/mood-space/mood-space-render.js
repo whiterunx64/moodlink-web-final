@@ -103,90 +103,21 @@ export function build_moodspace_node(moodspace) {
         `;
 
         root.appendChild(indicator);
-        root.addEventListener("click", () =>
-            open_moodspace_modal(moodspace, name, initial, time, flagged)
-        );
+root.addEventListener("click", () =>
+    window.dispatchEvent(new CustomEvent("open-moodspace-modal", {
+        detail: {
+            name,
+            initial,
+            time,
+            flagged,
+            content: moodspace.content ?? "",
+        }
+    }))
+);
     });
 
     return root;
 }
-
-// 2 BUILDS AND OPENS A FULL-MESSAGE MODAL
-
-function open_moodspace_modal(moodspace, name, initial, time, flagged) {
-    document.getElementById("moodspace-modal-overlay")?.remove();
-
-    const overlay = document.createElement("div");
-    overlay.id = "moodspace-modal-overlay";
-    overlay.className = "ms-overlay fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/45";
-
-    const modal = document.createElement("div");
-    modal.className = "ms-modal bg-white rounded-xl w-full max-w-[500px] max-h-[80vh] flex flex-col overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.25)]";
-
-    const header = document.createElement("div");
-    header.className = "flex justify-between items-center px-5 py-4 border-b border-gray-100";
-
-    const left = document.createElement("div");
-    left.className = "flex items-center gap-3";
-
-    const avatar = document.createElement("div");
-    avatar.className = "w-[38px] h-[38px] rounded-full flex items-center justify-center text-[15px] font-bold text-white bg-accent shrink-0";
-    avatar.textContent = initial;
-
-    const meta = document.createElement("div");
-
-    const mName = document.createElement("p");
-    mName.className = "m-0 font-bold text-sm text-gray-900";
-    mName.textContent = purifyText(name);
-
-    const mTime = document.createElement("p");
-    mTime.className = "m-0 text-[12px] text-gray-400";
-    mTime.textContent = time;
-
-    meta.appendChild(mName);
-    meta.appendChild(mTime);
-    left.appendChild(avatar);
-    left.appendChild(meta);
-
-    const closeBtn = document.createElement("button");
-    closeBtn.className = "w-[30px] h-[30px] rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 border-none cursor-pointer text-lg flex items-center justify-center transition-colors duration-150";
-    closeBtn.innerHTML = "&times;";
-
-    header.appendChild(left);
-    header.appendChild(closeBtn);
-
-    const bodyWrap = document.createElement("div");
-    bodyWrap.className = "px-5 py-5 overflow-y-auto text-sm text-gray-700 leading-[1.8] whitespace-pre-wrap break-words";
-
-    if (flagged) {
-        const flag = document.createElement("div");
-        flag.className = "inline-flex items-center gap-1 mb-[14px] px-3 py-[5px] bg-red-100 text-red-600 text-[12px] font-semibold rounded-full";
-        flag.textContent = "⚑ Flagged";
-        bodyWrap.appendChild(flag);
-    }
-
-    const content = document.createElement("p");
-    content.textContent = moodspace.content ?? "";
-
-    bodyWrap.appendChild(content);
-    modal.appendChild(header);
-    modal.appendChild(bodyWrap);
-    overlay.appendChild(modal);
-    document.body.appendChild(overlay);
-
-    const close = () => overlay.remove();
-
-    closeBtn.onclick = close;
-    overlay.onclick = (e) => { if (e.target === overlay) close(); };
-
-    document.addEventListener("keydown", function onKey(e) {
-        if (e.key === "Escape") {
-            close();
-            document.removeEventListener("keydown", onKey);
-        }
-    });
-}
-
 
 // 3 BUILDS A SKELETON CARD NODE
 
