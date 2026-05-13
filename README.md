@@ -43,13 +43,20 @@ Subscription is established via api call `/realtime/v1/websocket`
 
 ## How it works ?
 ### Supabase realtime channel
-`Mood space` 
 ##### INCOMPLETE
-- not enough arbitrary student data
-- realtime feed via `supabase-ws.js`
-- daily refresh with midnight auto-reset
-- date filtering using admin's local timezone
-<img width="500" alt="image" src="https://github.com/user-attachments/assets/fa3df29c-f4c3-4ddb-a9de-f83bb857c78f" />
+`Mood space` 
+##### Orchestrates live post updates with date based filtering
+
+<img width="1100" alt="image" src="https://github.com/user-attachments/assets/679b209d-b2e0-4e35-b177-c0b77527546c" />
+
+
+
+---
+
+`Metrics`
+##### The system collects counts for logs, students, flagged posts, and requests.
+
+<img width="1100" alt="image" src="https://github.com/user-attachments/assets/86be8223-55d1-4c1a-8699-1b29322c3298" />
 
 ---
 
