@@ -12,22 +12,23 @@
 </head>
 
 <body class="bg-bg-main min-h-screen">
-  <div class="flex min-h-screen"
-     x-data="{ sidebarOpen: false }"
-     x-init="
+  <div class="flex min-h-screen" x-data="{ sidebarOpen: false }" x-init="
         window.addEventListener('resize', () => {
           if (window.innerWidth >= 1024) {
             sidebarOpen = false;
           }
         });
-     "
-     @keydown.escape.window="sidebarOpen = false">
+     " @keydown.escape.window="sidebarOpen = false">
+
     <!-- Mobile Overlay -->
-    <div @click="sidebarOpen = false" class="fixed inset-0 bg-black/50 z-20 lg:hidden transition-opacity duration-300"
-      :class="sidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'"></div>
+    <div x-cloak @click="sidebarOpen = false"
+      class="fixed inset-0 bg-black/50 z-20 lg:hidden transition-opacity duration-300"
+      :class="sidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'">
+    </div>
 
     <!-- Sidebar -->
-    <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" :aria-hidden="(!sidebarOpen).toString()" class="fixed lg:static inset-y-0 left-0 z-30
+    <aside x-cloak :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" :aria-hidden="(!sidebarOpen).toString()"
+      class="fixed lg:static inset-y-0 left-0 z-30
              w-64 bg-sidebar text-white flex flex-col flex-shrink-0
              lg:translate-x-0 transition-transform duration-300 ease-in-out">
 
@@ -72,7 +73,6 @@
       <div class="flex-1 overflow-y-auto p-8 scroll-hide">
         @yield('content')
       </div>
-
     </main>
   </div>
   @stack('scripts')
