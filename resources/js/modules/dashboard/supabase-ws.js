@@ -1,11 +1,12 @@
 import { supabase } from "@/core/lib/supabase";
 import { init_metrics } from "@/modules/dashboard/metrics";
-import { fetch_single_post } from "@/modules/dashboard/mood-space/mood-space-fetch";
+import { fetch_single_post } from "@/modules/dashboard/mood-space/post-service";
 import {
     add_moodspace_item,
     replace_moodspace_item,
     delete_moodspace_item,
-} from "@/modules/dashboard/mood-space/mood-space-render";
+} from "@/modules/dashboard/mood-space/entries-manager";
+import { debounce } from "@/core/lib/debounce";
 
 // CENTRALIZE WEBSOCKET
 
