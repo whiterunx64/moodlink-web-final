@@ -1,6 +1,6 @@
 import { supabase } from "@/core/lib/supabase";
 import { init_metrics } from "@/modules/dashboard/metrics";
-import { fetch_single_post } from "@/modules/dashboard/mood-space/post-service";
+import { fetch_single_post } from "@/modules/dashboard/mood-space/post-service.js";
 import {
     add_moodspace_item,
     replace_moodspace_item,
@@ -12,21 +12,20 @@ import { debounce } from "@/core/lib/debounce";
 
 let mood_channel = null;
 let metrics_channel = null;
-let metrics_timer = null;
-const debounce_ms = 100; // reduce multiple call in short period
+let counts_channel = null;
+const debounce_ms = 600; // reduce multiple call in short period
+
+// DASHBOARD SUBMODULE REFRESH HANDLER -- check core/lib/debounce.js
+
+const refresh_metrics = debounce(init_metrics, debounce_ms);
 
 // stop realtime on channel failure
 const on_channel_error = (status) => {
     if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") stop_realtime();
 };
 
-function refresh_metrics() {
-    clearTimeout(metrics_timer);
-    metrics_timer = setTimeout(() => init_metrics(), debounce_ms);
-}
-
 export function start_realtime() {
-    if (mood_channel || metrics_channel) return; // only one active channel
+    if (mood_channel || metrics_channel || counts_channel) return; // only one active channel
     // Mood Listener Submodule
     mood_channel = supabase.channel("mood-space");
     mood_channel
@@ -75,24 +74,33 @@ export function start_realtime() {
     metrics_channel
         .on(
             "postgres_changes",
-            { event: "*", schema: "public", table: "posts" },
-            refresh_metrics,
-        )
-        .on(
-            "postgres_changes",
             { event: "*", schema: "public", table: "students" },
-            refresh_metrics,
+            () => refresh_metrics.trigger(), // student count changed
         )
         .on(
             "postgres_changes",
             { event: "*", schema: "public", table: "appointments" },
-            refresh_metrics,
+            // logs the data
+            // (payload) => { console.log("[metrics] appointments fired", payload); refresh_metrics.trigger(); },
+            () => refresh_metrics.trigger(), // appointment count changed
         )
+        // check logs channel subscription status
+        // .subscribe((status) => { console.log("[metrics] channel status →", status); on_channel_error(status); });
+        .subscribe(on_channel_error);
+    // Count Listener Submodule
+    counts_channel = supabase.channel("counts");
+    counts_channel
+        .on(
+            "postgres_changes",
+            { event: "*", schema: "public", table: "posts" },
+            () => refresh_metrics.trigger(), // post affects log + flagged count
+        )
+        // .on("postgres_changes", { event: "*", schema: "public", table: "escalations" }, () => refresh_metrics.trigger())
         .subscribe(on_channel_error);
 }
 
 export async function stop_realtime() {
-    clearTimeout(metrics_timer); // stop pending refresh
+    refresh_metrics.cancel(); // clear any pending debounced refresh
     if (mood_channel) {
         await supabase.removeChannel(mood_channel);
         mood_channel = null;
@@ -100,5 +108,9 @@ export async function stop_realtime() {
     if (metrics_channel) {
         await supabase.removeChannel(metrics_channel);
         metrics_channel = null;
+    }
+    if (counts_channel) {
+        await supabase.removeChannel(counts_channel);
+        counts_channel = null;
     }
 }
