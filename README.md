@@ -11,7 +11,7 @@ Subscription is established via api call `/realtime/v1/websocket`
 ### Centralized WebSocket Architecture
 `some modules still in progress`
 
-<img width="300"  alt="image" src="https://github.com/user-attachments/assets/9feead98-2c3e-466d-965e-a7b74178df9c" />
+<img width="300" alt="image" src="https://github.com/user-attachments/assets/892d3b4b-ed1e-4e71-84c1-c15cd1ea2d65" />
 
 `supabase-ws.js`
 
@@ -38,6 +38,12 @@ Subscription is established via api call `/realtime/v1/websocket`
 `Metrics Table submodule`
 
 <img width="400" alt="image" src="https://github.com/user-attachments/assets/1895257c-3fb6-462d-a1ea-a7f20b6e5647" />
+
+---
+
+`Appointment statistic`
+
+<img width="400" alt="image" src="https://github.com/user-attachments/assets/07a65371-fe8f-42a2-983c-92b53c6d3f0e" />
 
 ---
 
