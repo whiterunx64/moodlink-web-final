@@ -12,6 +12,12 @@ window.Alpine = Alpine;
 Alpine.start();
 
 document.addEventListener("DOMContentLoaded", () => {
-    init_auth();
-    init_dashboard();
+    Promise.allSettled([
+        init_auth(),
+        init_dashboard(),
+    ]).then(results => {
+        results.forEach(({ status, reason }) => {
+            if (status === "rejected") console.error(reason);
+        });
+    });
 });

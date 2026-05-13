@@ -7,7 +7,7 @@ import {
     build_skeleton_card,
     build_moodspace_empty_node,
     format_today_label,
-} from "@/modules/dashboard/mood-space/mood-space-render";
+} from "@/modules/dashboard/mood-space/entries-manager";
 
 let active_posts_controller = null; // abort control
 

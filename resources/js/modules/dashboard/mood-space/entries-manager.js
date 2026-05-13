@@ -103,17 +103,17 @@ export function build_moodspace_node(moodspace) {
         `;
 
         root.appendChild(indicator);
-root.addEventListener("click", () =>
-    window.dispatchEvent(new CustomEvent("open-moodspace-modal", {
-        detail: {
-            name,
-            initial,
-            time,
-            flagged,
-            content: moodspace.content ?? "",
-        }
-    }))
-);
+        root.addEventListener("click", () =>
+            window.dispatchEvent(new CustomEvent("open-moodspace-modal", {
+                detail: {
+                    name,
+                    initial,
+                    time,
+                    flagged,
+                    content: moodspace.content ?? "",
+                }
+            }))
+        );
     });
 
     return root;
@@ -171,11 +171,11 @@ export function build_skeleton_card() {
 
 
 // 4 RETURNS THE EMPTY STATE NODE (rendered by Blade, with fallback)
- 
+
 export function build_moodspace_empty_node() {
     const el = document.getElementById("mood-space-empty");
     if (el) return el;
- 
+
     // fallback if Blade template is missing
     const fallback = document.createElement("div");
     fallback.id = "mood-space-empty";
