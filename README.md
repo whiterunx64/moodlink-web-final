@@ -71,4 +71,12 @@ Subscription is established via api call `/realtime/v1/websocket`
 
 ---
 
+`Mood Trend`
+##### The system aggregates mood data over time to generate visual insights and trend charts
+
+<img width="1100" alt="image" src="https://github.com/user-attachments/assets/e831ce0f-9d38-41a5-abc4-5cc90e13e06a" />
+
+
+---
+
 
