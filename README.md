@@ -66,7 +66,7 @@ Subscription is established via api call `/realtime/v1/websocket`
 `Metrics`
 ##### The system collects counts for logs, students, flagged posts, and requests.
 
-<img width="1100" alt="image" src="https://github.com/user-attachments/assets/fa5effb1-f18d-42a4-b153-9ce5969d42ba" />
+<img width="1100" alt="image" src="https://github.com/user-attachments/assets/712d02b9-121b-47fd-915a-35c2ba14940a" />
 
 ---
 
