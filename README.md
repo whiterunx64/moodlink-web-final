@@ -43,7 +43,12 @@ Subscription is established via api call `/realtime/v1/websocket`
 
 `Appointment statistic`
 
-<img width="400" alt="image" src="https://github.com/user-attachments/assets/07a65371-fe8f-42a2-983c-92b53c6d3f0e" />
+<img width="300" alt="image" src="https://github.com/user-attachments/assets/07a65371-fe8f-42a2-983c-92b53c6d3f0e" />
+
+`mood trend`
+
+<img width="300" alt="image" src="https://github.com/user-attachments/assets/7a4d5dfc-98b7-4054-a7d3-fb963192e698" />
+
 
 ---
 
