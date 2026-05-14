@@ -25,7 +25,7 @@ export const dashboard_moodspace_schema = z.object({
     datetime: z.string(),
     status: z.string(),
     // required fields from students table connected to post table
-    students: z.object({ 
+    students: z.object({
         anonymous_name: z.string().nullable(),
         first_name: z.string(),
         last_name: z.string(),
@@ -38,4 +38,13 @@ export const dashboard_metrics_schema = z.object({
     students: z.number().int().nonnegative(),
     flagged: z.number().int().nonnegative(),
     requests: z.number().int().nonnegative(),
+});
+// Zod schema mood trends DB supabase
+export const dashboard_mood_trends_schema = z.object({
+    id: z.number(),
+    mood: z.string().nullable(),
+    datetime: z.string(),
+    students: z.object({
+        section: z.string().nullable(),
+    }),
 });

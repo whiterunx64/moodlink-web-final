@@ -4,6 +4,7 @@ import Alpine from "alpinejs";
 
 // Alpine components
 import "@/modules/dashboard/mood-space/post-modal.js";
+import "@/modules/dashboard/mood-trends/filter-switcher.js"
 
 import { init_auth } from "@/modules/auth";
 import { init_dashboard } from "@/modules/dashboard";
