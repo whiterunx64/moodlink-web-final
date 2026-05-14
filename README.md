@@ -9,9 +9,10 @@ Subscription is established via api call `/realtime/v1/websocket`
 <img width="800" alt="image" src="https://github.com/user-attachments/assets/9a0c7065-20ea-4a23-93f9-f3c97fcd5ddc" />
 
 ### Centralized WebSocket Architecture
-`some modules still in progress`
 
-<img width="300" alt="image" src="https://github.com/user-attachments/assets/892d3b4b-ed1e-4e71-84c1-c15cd1ea2d65" />
+- Event bus handles and distributes realtime events across multiple submodules
+<img width="300" alt="image" src="https://github.com/user-attachments/assets/44bb9f5a-e806-4fdb-9f47-1160c2c95f19" />
+
 
 `supabase-ws.js`
 
@@ -58,23 +59,21 @@ Subscription is established via api call `/realtime/v1/websocket`
 `Mood space` 
 ##### Orchestrates live post updates with date based filtering
 
-<img width="1100" alt="image" src="https://github.com/user-attachments/assets/679b209d-b2e0-4e35-b177-c0b77527546c" />
-
-
+<img width="1100" alt="image" src="https://github.com/user-attachments/assets/58ee40e8-2028-410c-9c3a-f2b57d0d74ce" />
 
 ---
 
 `Metrics`
 ##### The system collects counts for logs, students, flagged posts, and requests.
 
-<img width="1100" alt="image" src="https://github.com/user-attachments/assets/86be8223-55d1-4c1a-8699-1b29322c3298" />
+<img width="1100" alt="image" src="https://github.com/user-attachments/assets/fa5effb1-f18d-42a4-b153-9ce5969d42ba" />
 
 ---
 
 `Mood Trend`
 ##### The system aggregates mood data over time to generate visual insights and trend charts
 
-<img width="1100" alt="image" src="https://github.com/user-attachments/assets/e831ce0f-9d38-41a5-abc4-5cc90e13e06a" />
+<img width="1100" alt="image" src="https://github.com/user-attachments/assets/cbbb2286-d041-45d3-8454-793a0ae796c2" />
 
 
 ---
