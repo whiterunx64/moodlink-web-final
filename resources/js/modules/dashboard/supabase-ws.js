@@ -5,16 +5,16 @@ import { create_bus } from "@/core/lib/event-bus";
 // CENTRALIZE WEBSOCKET
 
 let posts_channel = null;
-let metrics_channel = null;
+let live_channel = null;
 
 // BUSES — one per channel, exposed via controlled API
 const posts_bus = create_bus();
-const metrics_bus = create_bus();
+const live_bus = create_bus();
 
 export const on_post_event = (event, fn) => posts_bus.on(event, fn);
 export const off_post_event = (event, fn) => posts_bus.off(event, fn);
-export const on_metrics_event = (event, fn) => metrics_bus.on(event, fn);
-export const off_metrics_event = (event, fn) => metrics_bus.off(event, fn);
+export const on_live_event = (event, fn) => live_bus.on(event, fn);
+export const off_live_event = (event, fn) => live_bus.off(event, fn);
 
 // stop realtime on channel failure
 const on_channel_error = (status) => {
@@ -24,7 +24,7 @@ const on_channel_error = (status) => {
 };
 
 export function start_realtime() {
-    if (posts_channel || metrics_channel) return;
+    if (posts_channel || live_channel) return;
 
     // POSTS CHANNEL
     posts_channel = supabase.channel("posts");
@@ -63,18 +63,18 @@ export function start_realtime() {
 
         .subscribe(on_channel_error);
 
-    // METRICS CHANNEL
-    metrics_channel = supabase.channel("metrics");
-    metrics_channel
+    // LIVE CHANNEL
+    live_channel = supabase.channel("live");
+    live_channel
         .on(
             "postgres_changes",
             { event: "*", schema: "public", table: "students" },
-            () => metrics_bus.emit("changed"), // refresh student count
+            () => live_bus.emit("students:changed"), // refresh student count
         )
         .on(
             "postgres_changes",
             { event: "*", schema: "public", table: "appointments" },
-            () => metrics_bus.emit("changed"), // refresh appointment data
+            () => live_bus.emit("appointments:changed"), // refresh appointment data
             // logs the data
             // (payload) => { console.log("[metrics] appointments fired", payload); refresh_metrics.trigger(); },
         )
@@ -88,8 +88,8 @@ export async function stop_realtime() {
         await supabase.removeChannel(posts_channel);
         posts_channel = null;
     }
-    if (metrics_channel) {
-        await supabase.removeChannel(metrics_channel);
-        metrics_channel = null;
+    if (live_channel) {
+        await supabase.removeChannel(live_channel);
+        live_channel = null;
     }
 }
