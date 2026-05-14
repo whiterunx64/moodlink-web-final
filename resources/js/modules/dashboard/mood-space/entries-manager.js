@@ -124,28 +124,28 @@ export function build_moodspace_node(moodspace) {
 export function build_skeleton_card() {
     const root = document.createElement("div");
     root.className =
-        "mood-entry-item bg-gray-100 rounded-[10px] p-[14px_18px] w-full relative overflow-hidden animate-pulse";
+        "mood-entry-item bg-gray-100 rounded-[10px] p-[18px_20px] w-full relative overflow-hidden animate-pulse";
     root.setAttribute("aria-hidden", "true");
     root.dataset.type = "loading";
 
-    // header 
+    // header
     const header = document.createElement("div");
-    header.className = "flex justify-between items-center mb-[10px]";
+    header.className = "flex justify-between items-center mb-3";
 
     const left = document.createElement("div");
-    left.className = "flex items-center gap-[10px]";
+    left.className = "flex items-center gap-3";
 
     const avatar = document.createElement("div");
-    avatar.className = "w-7 h-7 shrink-0 rounded-full bg-gray-300";
+    avatar.className = "w-9 h-9 shrink-0 rounded-full bg-gray-300";
 
-    // mirrors the real card's meta block
     const meta = document.createElement("div");
+    meta.className = "flex flex-col gap-1.5";
 
     const name = document.createElement("div");
-    name.className = "h-3 w-24 bg-gray-300 rounded";
+    name.className = "h-3 w-28 bg-gray-300 rounded";
 
     const time = document.createElement("div");
-    time.className = "h-2.5 w-16 bg-gray-300 rounded mt-px";
+    time.className = "h-2.5 w-20 bg-gray-200 rounded";
 
     meta.appendChild(name);
     meta.appendChild(time);
@@ -153,20 +153,19 @@ export function build_skeleton_card() {
     left.appendChild(meta);
     header.appendChild(left);
 
-    // optional badge placeholder 
     const badge = document.createElement("div");
-    badge.className = "h-5 w-14 bg-gray-200 rounded shrink-0";
+    badge.className = "h-5 w-16 bg-gray-200 rounded shrink-0";
     header.appendChild(badge);
 
-    // content 
+    // content lines
     const line1 = document.createElement("div");
     line1.className = "h-3 w-full bg-gray-300 rounded";
 
     const line2 = document.createElement("div");
-    line2.className = "h-3 w-full bg-gray-300 rounded mt-2";
+    line2.className = "h-3 w-5/6 bg-gray-300 rounded mt-2.5";
 
     const line3 = document.createElement("div");
-    line3.className = "h-3 w-30 bg-gray-300 rounded mt-2";
+    line3.className = "h-3 w-32 bg-gray-300 rounded mt-2.5";
 
     root.appendChild(header);
     root.appendChild(line1);
@@ -176,18 +175,16 @@ export function build_skeleton_card() {
     return root;
 }
 
-
 // 3 RETURNS THE EMPTY STATE NODE (rendered by Blade, with fallback)
 
 export function build_moodspace_empty_node() {
     const el = document.getElementById("mood-space-empty");
     if (el) return el;
 
-    // fallback if Blade template is missing
     const fallback = document.createElement("div");
     fallback.id = "mood-space-empty";
     fallback.className =
-        "flex flex-col items-center justify-center h-full min-h-[200px] text-text-muted text-sm text-center gap-2";
+         "flex flex-col items-center justify-center h-full w-full text-text-muted text-sm text-center gap-2";
     fallback.innerHTML = `
         <p class="font-medium text-text-dark">No mood entries today</p>
         <p class="text-xs text-text-muted">Students haven't submitted any entries yet.</p>

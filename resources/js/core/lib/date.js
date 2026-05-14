@@ -5,6 +5,7 @@ export function get_today_range() {
     
     // always updates dynamically when the date changes, so it always reflects today in the user's local timezone
     const date = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+    //const date = "2026-05-17";
     return {
         startISO: `${date}T00:00:00.000`,
         endISO: `${date}T23:59:59.999`,

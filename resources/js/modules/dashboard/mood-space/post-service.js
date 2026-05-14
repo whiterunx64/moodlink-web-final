@@ -71,7 +71,7 @@ export async function load_moodspace_posts() {
         c.replaceChildren();
         const error_node = document.createElement("div");
         error_node.className =
-            "flex items-center justify-center h-full min-h-[200px] text-red-400 text-sm";
+            "flex flex-col items-center justify-center flex-1 min-h-[320px] w-full text-red-400 text-sm text-center";
         error_node.textContent = "Failed to load entries. Please try again.";
         c.appendChild(error_node);
     } finally {

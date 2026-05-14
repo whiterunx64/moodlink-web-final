@@ -4,9 +4,9 @@
 
 @section('content')
     @include('dashboard.metrics')
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6 lg:min-h-[60vh] xl:min-h-[70vh]">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6 min-h-[400px] lg:min-h-[60vh]">
         @include('dashboard.mood-space')
         @include('dashboard.mood-trends')
-        @include('dashboard.appointments-overview')
     </div>
+    @include('dashboard.appointments-overview')
 @endsection
