@@ -16,6 +16,9 @@ let _resize_ob = null; // handles auto resize
 let _last = { tab: null, labels: null, datasets: null }; // render cache for diffing
 const _hidden = new Set(); // tracks hidden moods
 
+let _legend_handler = null;
+let _legend_node = null;
+
 // find legend container near chart
 function legend_el() {
     return (
@@ -24,7 +27,28 @@ function legend_el() {
             ?.querySelector("[data-mood-trends-legend]") ?? null
     );
 }
+// event delegation on the stable parent element
+function wire_legend_delegation(el, get_datasets) {
+    _legend_node = el; // stored for removeEventListener in destroy_chart
 
+    _legend_handler = (e) => {
+        //console.log("legend clicked:", e.target);
+        const btn = e.target.closest("[data-legend]");
+        const reset = e.target.closest("[data-legend-reset]");
+
+        if (reset) {
+            _hidden.clear();
+        } else if (btn) {
+            const mood = btn.dataset.legend;
+            _hidden.has(mood) ? _hidden.delete(mood) : _hidden.add(mood); // toggle
+        } else return;
+        //console.log("hidden state:", [..._hidden])
+        apply_visibility();
+        render_legend(get_datasets());
+    };
+
+    el.addEventListener("click", _legend_handler); // one listener, survives innerHTML swaps
+}
 // builds clickable legend that toggles and remembers hidden moods
 function render_legend(datasets) {
     const el = legend_el();
@@ -64,21 +88,6 @@ function render_legend(datasets) {
             : "";
 
     el.innerHTML = pills + reset;
-
-    el.querySelectorAll("[data-legend]").forEach((btn) => {
-        btn.addEventListener("click", () => {
-            const mood = btn.dataset.legend;
-            _hidden.has(mood) ? _hidden.delete(mood) : _hidden.add(mood);
-            apply_visibility();
-            render_legend(datasets); // refresh legend state
-        });
-    });
-
-    el.querySelector("[data-legend-reset]")?.addEventListener("click", () => {
-        _hidden.clear();
-        apply_visibility();
-        render_legend(datasets);
-    });
 }
 
 function apply_visibility() {
@@ -116,8 +125,14 @@ export function render({ labels, datasets, total }, tab = "Today") {
     if (!_chart) {
         _chart = echarts.init(_container, null, { renderer: "canvas" }); // create chart
         _chart.setOption(CHART_OPTION);
+
         _resize_ob = new ResizeObserver(() => _chart?.resize());
         _resize_ob.observe(_container);
+
+        const legend = legend_el();
+        if (legend) {
+            wire_legend_delegation(legend, () => _last.datasets ?? []);
+        }
     }
 
     const dirty_tab = tab_changed(_last, tab);
@@ -145,10 +160,14 @@ export function render({ labels, datasets, total }, tab = "Today") {
         })),
     };
 }
-
 export function destroy_chart() {
     _resize_ob?.disconnect();
-    _chart?.dispose(); // prevent memory leaks
+    _chart?.dispose();
+    if (_legend_node && _legend_handler) {
+        _legend_node.removeEventListener("click", _legend_handler);
+    }
+    _legend_node = null;
+    _legend_handler = null;
     _chart = null;
     _container = null;
     _resize_ob = null;
