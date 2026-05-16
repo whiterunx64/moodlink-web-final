@@ -73,6 +73,11 @@ export function start_realtime() {
         )
         .on(
             "postgres_changes",
+            { event: "*", schema: "public", table: "posts" },
+            () => live_bus.emit("posts:changed"), // refresh posts data
+        )
+        .on(
+            "postgres_changes",
             { event: "*", schema: "public", table: "appointments" },
             () => live_bus.emit("appointments:changed"), // refresh appointment data
             // logs the data

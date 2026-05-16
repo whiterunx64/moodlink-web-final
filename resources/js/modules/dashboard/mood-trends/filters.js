@@ -1,40 +1,34 @@
-let _active_tab = "Today";
-let _active_section = "All";
+let _tab = "Today";
+let _section = "All";
 let _card = null;
-let _on_change = null;
+let _onChange = null;
 
-export function get_active_tab() {
-    return _active_tab;
-}
+export const get_active_tab = () => _tab;
+export const get_active_section = () => _section;
 
-export function get_active_section() {
-    return _active_section;
-}
-
-function on_filter_event(e) {
+function on_event(e) {
     const { tab, section } = e.detail ?? {};
+    const diff_tab = tab !== undefined && tab !== _tab;
+    const diff_section = section !== undefined && section !== _section;
 
-    const tab_changed = tab && tab !== _active_tab;
-    const section_changed = section && section !== _active_section;
+    if (!diff_tab && !diff_section) return;
+    if (diff_tab) _tab = tab;
+    if (diff_section) _section = section;
 
-    if (!tab_changed && !section_changed) return;
-
-    if (tab_changed) _active_tab = tab;
-    if (section_changed) _active_section = section;
-
-    _on_change?.();
+    _onChange?.();
 }
 
-export function wire_filters(card, on_change) {
+export function wire_filters(card, onChange) {
+    if (_card) unwire_filters();
     _card = card;
-    _on_change = on_change;
-    card.addEventListener("mood-trends:filter", on_filter_event);
+    _onChange = onChange;
+    card.addEventListener("mood-trends:filter", on_event);
 }
 
 export function unwire_filters() {
-    _card?.removeEventListener("mood-trends:filter", on_filter_event);
+    _card?.removeEventListener("mood-trends:filter", on_event);
     _card = null;
-    _on_change = null;
-    _active_tab = "Today";
-    _active_section = "All";
+    _onChange = null;
+    _tab = "Today";
+    _section = "All";
 }

@@ -1,4 +1,4 @@
-// handles tab change and emits filter event
+// handle tab and section changes and emit filter event
 document.addEventListener("alpine:init", () => {
     window.Alpine.data("filter_tab", () => ({
         activeTab: "Today",
@@ -12,21 +12,24 @@ document.addEventListener("alpine:init", () => {
         },
 
         setTab(tab) {
-            this.activeTab = tab;
+            this.activeTab = tab; // update active time period tab
             this._emit();
         },
 
         setSection(section) {
-            this.activeSection = section;
+            this.activeSection = section; // update active section
             this._emit();
         },
 
         _emit() {
             this.$el.dispatchEvent(
                 new CustomEvent("mood-trends:filter", {
-                    bubbles: true,
-                    detail: { tab: this.activeTab, section: this.activeSection },
-                })
+                    bubbles: true, // allow event to propagate
+                    detail: {
+                        tab: this.activeTab,
+                        section: this.activeSection, // current section value
+                    },
+                }),
             );
         },
     }));
