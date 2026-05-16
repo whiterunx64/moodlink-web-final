@@ -62,15 +62,15 @@ export const CHART_OPTION = {
 // MAP DATASETS TO ECHART SERIES
 export function build_series(datasets) {
     return datasets.map((ds) => {
-        const mood = label_to_mood(ds.label);
-        const color = MOOD_META[mood]?.color ?? "#94a3b8";
+        const mood_name = label_to_mood(ds.label);
+        const mood_color = MOOD_META[mood_name]?.color ?? "#94a3b8";
 
         return {
             name: ds.label,
             type: "bar",
             barMaxWidth: 24,
             data: ds.data,
-            itemStyle: { color },
+            itemStyle: { color: mood_color },
         };
     });
 }
@@ -78,26 +78,29 @@ export function build_series(datasets) {
 export function get_zoom(tab, labels) {
     if (tab !== "Today") return [inside(0, 100), slider(0, 100)];
 
-    const total = labels.length;
-    if (total === 0) return [inside(0, 100), slider(0, 100)];
+    const total_labels = labels.length;
+    if (total_labels === 0) return [inside(0, 100), slider(0, 100)];
 
     const now = new Date(
         new Date().toLocaleString("en-US", { timeZone: TIMEZONE }),
     ); // convert current UTC to Asia/Manila timezone
-    const minutes = now.getHours() * 60 + now.getMinutes();
-    const cur_slot = Math.floor(minutes / 10);
+    const elapsed_minutes = now.getHours() * 60 + now.getMinutes();
+    const current_slot = Math.floor(elapsed_minutes / 10);
 
-    const safe = Math.max(total - 1, 1);
+    const safe_range = Math.max(total_labels - 1, 1);
     const WINDOW = 12;
     const pad = 2;
 
-    const end_slot = Math.min(total - 1, cur_slot + pad);
-    const start_slot = Math.max(0, end_slot - WINDOW);
+    const end_slot_index = Math.min(total_labels - 1, current_slot + pad);
+    const start_slot_index = Math.max(0, end_slot_index - WINDOW);
 
-    const s = Math.round((start_slot / safe) * 100);
-    const e = Math.round((end_slot / safe) * 100);
+    const zoom_start_pct = Math.round((start_slot_index / safe_range) * 100);
+    const zoom_end_pct = Math.round((end_slot_index / safe_range) * 100);
 
-    return [inside(s, e), slider(s, e)];
+    return [
+        inside(zoom_start_pct, zoom_end_pct),
+        slider(zoom_start_pct, zoom_end_pct),
+    ];
 }
 
 // CREATE INSIDE ZOOM CONFIG

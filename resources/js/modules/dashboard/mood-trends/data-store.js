@@ -1,24 +1,26 @@
 import { supabase } from "@/core/lib/supabase";
 import { dashboard_mood_trends_schema } from "@/core/lib/schema";
 
-const _store = new Map();
+const post_store = new Map();
 
-export const get_all = () => [..._store.values()];
+export const get_all = () => [...post_store.values()];
 
 export function get_sections() {
-    const seen = new Set(
-        [..._store.values()]
+    const seen_sections = new Set(
+        [...post_store.values()]
             .map((p) => {
-                const s = p.students;
-                return Array.isArray(s) ? s[0]?.section : s?.section;
+                const section_data = p.students;
+                return Array.isArray(section_data)
+                    ? section_data[0]?.section
+                    : section_data?.section;
             })
             .filter(Boolean),
     );
-    return ["All", ...[...seen].sort()];
+    return ["All", ...[...seen_sections].sort()];
 }
 
 export async function seed_store() {
-    _store.clear();
+    post_store.clear();
 
     const { data, error } = await supabase
         .from("posts")
@@ -32,8 +34,9 @@ export async function seed_store() {
     }
 
     for (const row of data) {
-        const result = dashboard_mood_trends_schema.safeParse(row);
-        if (result.success) _store.set(result.data.id, result.data);
-        else console.warn("[mood-trends] invalid row", row, result.error);
+        const parsed_row = dashboard_mood_trends_schema.safeParse(row);
+        if (parsed_row.success)
+            post_store.set(parsed_row.data.id, parsed_row.data);
+        else console.warn("[mood-trends] invalid row", row, parsed_row.error);
     }
 }

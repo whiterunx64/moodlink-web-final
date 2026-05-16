@@ -1,46 +1,38 @@
-import { ALL_MOODS, MOOD_META } from "./mood-trends-config";
-import { get_today_range, TIMEZONE } from "@/core/lib/date.js";
-
+import { ALL_MOODS, MOOD_META } from "./chart-config";
+import {
+    get_today_range,
+    to_manila_time,
+    get_manila_now,
+    format_date,
+    format_month,
+} from "@/core/lib/date.js";
 // Date configure
-const pht_from_utc = (d) =>
-    new Date(d.toLocaleString("en-US", { timeZone: TIMEZONE }));
-
-const to_date_str = (utc) => {
-    const d = pht_from_utc(utc);
-    const pad = (n) => String(n).padStart(2, "0");
-    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-};
-
-const get_section = (post) => {
-    const s = post.students;
-    return Array.isArray(s) ? s[0]?.section : s?.section;
+const get_post_section = (post) => {
+    const section_data = post.students;
+    return Array.isArray(section_data)
+        ? section_data[0]?.section
+        : section_data?.section;
 };
 
 // GET START AND END DATE FOR SELECTED TAB
 function get_range(tab) {
     const { startISO, endISO } = get_today_range();
 
-    let start = new Date(startISO);
-    let end = new Date(endISO);
+    let range_start = new Date(startISO);
+    let range_end = new Date(endISO);
 
-    if (tab === "Weekly") {
-        start.setDate(start.getDate() - 6);
-    } else if (tab === "Monthly") {
-        start.setMonth(start.getMonth() - 5);
-    }
+    if (tab === "Weekly") range_start.setDate(range_start.getDate() - 6);
+    else if (tab === "Monthly")
+        range_start.setMonth(range_start.getMonth() - 5);
 
-    return [start, end];
+    return [range_start, range_end];
 }
 
 // BUILD DAILY BUCKETS FOR TODAY TAB
 function today_buckets() {
-    const now = new Date(
-        new Date().toLocaleString("en-US", { timeZone: TIMEZONE }),
-    );
-
-    const minutes = now.getHours() * 60 + now.getMinutes();
-    const slot_count = Math.floor(minutes / 10) + 1;
-
+    const now = get_manila_now();
+    const elapsed_minutes = now.getHours() * 60 + now.getMinutes();
+    const slot_count = Math.floor(elapsed_minutes / 10) + 1;
     const slots = Array.from({ length: slot_count }, (_, i) => i * 10);
 
     return {
@@ -52,102 +44,84 @@ function today_buckets() {
         }),
         bucket_keys: slots.map(String),
         key_fn: (d) => {
-            const pht = pht_from_utc(d);
-            const minutes = pht.getHours() * 60 + pht.getMinutes();
-            return String(Math.floor(minutes / 10) * 10);
+            const manila = to_manila_time(d);
+            const elapsed = manila.getHours() * 60 + manila.getMinutes();
+            return String(Math.floor(elapsed / 10) * 10);
         },
     };
 }
 
 // BUILD DAILY BUCKETS FOR WEEKLY TAB
-function weekly_buckets(start) {
+function weekly_buckets(range_start) {
     const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-    const days = Array.from({ length: 7 }, (_, i) => {
-        const d = new Date(start);
-        d.setDate(start.getDate() + i);
+    const week_days = Array.from({ length: 7 }, (_, i) => {
+        const d = new Date(range_start);
+        d.setDate(range_start.getDate() + i);
         return d;
     });
 
     return {
-        labels: days.map((d) => {
-            const p = pht_from_utc(d);
-            return DAYS[p.getDay()];
-        }),
-        bucket_keys: days.map(to_date_str),
-        key_fn: (d) => to_date_str(d),
+        labels: week_days.map((d) => DAYS[to_manila_time(d).getDay()]),
+        bucket_keys: week_days.map(format_date),
+        key_fn: format_date,
     };
 }
-
 // BUILD DAILY BUCKETS FOR MONTHLY TAB
 function monthly_buckets() {
-    const months = [];
-    const labels = [];
-    const now = new Date();
-
-    const pad = (n) => String(n).padStart(2, "0");
-
-    for (let i = 5; i >= 0; i--) {
+    const now = get_manila_now();
+    const months = Array.from({ length: 6 }, (_, i) => {
         const d = new Date(now);
-        d.setMonth(now.getMonth() - i);
-
-        const p = pht_from_utc(d);
-
-        const key = `${p.getFullYear()}-${pad(p.getMonth() + 1)}`;
-        months.push(key);
-
-        const label = p.toLocaleString("en-US", { month: "short" });
-        labels.push(label);
-    }
+        d.setMonth(now.getMonth() - (5 - i));
+        return to_manila_time(d);
+    });
 
     return {
-        labels,
-        bucket_keys: months,
-        key_fn: (d) => {
-            const p = pht_from_utc(d);
-            return `${p.getFullYear()}-${pad(p.getMonth() + 1)}`;
-        },
+        labels: months.map((d) =>
+            d.toLocaleString("en-US", { month: "short" }),
+        ),
+        bucket_keys: months.map(format_month),
+        key_fn: format_month,
     };
 }
 
-const build_buckets = (tab, start) =>
+const build_buckets = (tab, range_start) =>
     tab === "Today"
         ? today_buckets()
         : tab === "Weekly"
-          ? weekly_buckets(start)
+          ? weekly_buckets(range_start)
           : monthly_buckets();
 
 // GROUP POSTS BY TIME AND COUNT MOODS
 export function aggregate(posts, tab, section = "All") {
-    const [start, end] = get_range(tab);
+    const [range_start, range_end] = get_range(tab);
+    const { labels, bucket_keys, key_fn } = build_buckets(tab, range_start);
 
-    const { labels, bucket_keys, key_fn } = build_buckets(tab, start);
-
-    let filtered = posts.filter((p) => {
-        const dt = new Date(p.datetime);
-        return dt >= start && dt <= end;
+    let posts_in_range = posts.filter((p) => {
+        const post_date = new Date(p.datetime);
+        return post_date >= range_start && post_date <= range_end;
     });
 
     if (section !== "All")
-        filtered = filtered.filter((p) => get_section(p) === section);
+        posts_in_range = posts_in_range.filter(
+            (p) => get_post_section(p) === section,
+        );
 
     const datasets = ALL_MOODS.map((mood) => {
-        const counts = Object.fromEntries(bucket_keys.map((k) => [k, 0]));
+        const mood_counts = Object.fromEntries(bucket_keys.map((k) => [k, 0]));
 
-        for (const p of filtered) {
+        for (const p of posts_in_range) {
             if (p.mood?.toLowerCase() !== mood) continue;
-
-            const key = key_fn(new Date(p.datetime));
-            if (key in counts) counts[key]++;
+            const matched_key = key_fn(new Date(p.datetime));
+            if (matched_key in mood_counts) mood_counts[matched_key]++;
         }
 
         const { emoji = "😶" } = MOOD_META[mood] ?? {};
-
         return {
             label: `${emoji} ${mood}`,
-            data: bucket_keys.map((k) => counts[k]),
+            data: bucket_keys.map((k) => mood_counts[k]),
         };
     });
 
-    return { labels, datasets, total: filtered.length };
+    return { labels, datasets, total: posts_in_range.length };
 }
