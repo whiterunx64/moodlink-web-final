@@ -1,23 +1,41 @@
 export const TIMEZONE = "Asia/Manila";
 
-// date filtering utilities
+export const get_manila_now = () =>
+    new Date(new Date().toLocaleString("en-US", { timeZone: TIMEZONE }));
+
+export const to_manila_time = (date = new Date()) =>
+    new Date(date.toLocaleString("en-US", { timeZone: TIMEZONE }));
+
+const pad = (n) => String(n).padStart(2, "0");
+
+export const format_date = (date) => {
+    const d = to_manila_time(date);
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+};
+
+export const format_month = (date) => {
+    const d = to_manila_time(date);
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}`;
+};
+
+export const format_time = (datetime) => {
+    const d = new Date(datetime);
+    return isNaN(d)
+        ? ""
+        : d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+};
+
+export const format_date_label = (date = get_manila_now()) =>
+    date.toLocaleDateString([], { month: "long", day: "numeric", year: "numeric" });
+
+// RANGE HELPERS
 export function get_today_range() {
-    const now = new Date();
-
-    const phtNow = new Date(
-        now.toLocaleString("en-US", { timeZone: TIMEZONE }),
-    );
-
-    const start = new Date(phtNow);
+    const now = get_manila_now();
+    const start = new Date(now);
     start.setHours(0, 0, 0, 0);
-
-    const end = new Date(phtNow);
+    const end = new Date(now);
     end.setHours(23, 59, 59, 999);
-
-    return {
-        startISO: start.toISOString(),
-        endISO: end.toISOString(),
-    };
+    return { startISO: start.toISOString(), endISO: end.toISOString() };
 }
 
 export function apply_today_range(query) {
@@ -25,19 +43,12 @@ export function apply_today_range(query) {
     return query.gte("datetime", startISO).lte("datetime", endISO);
 }
 
-// Runs a callback when the next day starts
+// SCHEDULING
 export function schedule_daily_refresh(callback) {
-    const now = new Date();
-
-    const phtNow = new Date(
-        now.toLocaleString("en-US", { timeZone: TIMEZONE }),
-    );
-
-    const nextMidnight = new Date(phtNow);
-    nextMidnight.setHours(24, 0, 0, 0);
-
-    const delay = nextMidnight.getTime() - phtNow.getTime();
-
+    const now = get_manila_now();
+    const next_midnight = new Date(now);
+    next_midnight.setHours(24, 0, 0, 0);
+    const delay = next_midnight.getTime() - now.getTime();
     setTimeout(() => {
         callback();
         schedule_daily_refresh(callback);
