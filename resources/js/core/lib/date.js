@@ -1,14 +1,24 @@
 // date filtering utilities
-export function get_today_range() {
+
+function get_pht_date() {
+
     const now = new Date();
+    const phtOffset = 8 * 60 * 60 * 1000;
+    const pht = new Date(now.getTime() + phtOffset);
     const pad = (n) => String(n).padStart(2, "0");
-    
-    // always updates dynamically when the date changes, so it always reflects today in the user's local timezone
-    const date = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
-    //const date = "2026-05-17";
+
     return {
-        startISO: `${date}T00:00:00.000`,
-        endISO: `${date}T23:59:59.999`,
+        year: pht.getUTCFullYear(),
+        month: pad(pht.getUTCMonth() + 1),
+        day: pad(pht.getUTCDate()),
+    };
+}
+
+export function get_today_range() {
+    const { year, month, day } = get_pht_date();
+    return {
+        startISO: `${year}-${month}-${day}T00:00:00.000+08:00`,
+        endISO:   `${year}-${month}-${day}T23:59:59.999+08:00`,
     };
 }
 
@@ -20,16 +30,20 @@ export function apply_today_range(query) {
 // Runs a callback when the next day starts
 export function schedule_daily_refresh(callback) {
     const now = new Date();
-    const midnight = new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        now.getDate() + 1,
+    const phtOffset = 8 * 60 * 60 * 1000;
+    const phtNow = new Date(now.getTime() + phtOffset);
+
+    const phtMidnight = new Date(Date.UTC(
+        phtNow.getUTCFullYear(),
+        phtNow.getUTCMonth(),
+        phtNow.getUTCDate() + 1,
         0, 0, 0, 0
-    );
-    const delay = midnight - now;
+    ) - phtOffset);
+
+    const delay = phtMidnight - now;
 
     setTimeout(() => {
         callback();
-        data_daily_reset(callback);
+        schedule_daily_refresh(callback); // callback reset
     }, delay);
 }
