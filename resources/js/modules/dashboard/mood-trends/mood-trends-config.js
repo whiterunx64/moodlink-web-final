@@ -1,4 +1,4 @@
-export const PHT_MS = 8 * 60 * 60 * 1000;
+import { TIMEZONE } from "@/core/lib/date.js";
 
 // HARDCODED LIST OF AVAILABLE MOODS
 export const ALL_MOODS = [
@@ -41,7 +41,6 @@ export const CHART_OPTION = {
         borderWidth: 1,
         padding: [8, 12],
         textStyle: { color: "#f1f5f9", fontSize: 12 },
-        extraCssText: "box-shadow:0 4px 16px rgba(0,0,0,0.4)",
     },
     xAxis: {
         type: "category",
@@ -70,35 +69,37 @@ export function build_series(datasets) {
             name: ds.label,
             type: "bar",
             barMaxWidth: 24,
-            barMinWidth: 12,
-            barCategoryGap: "30%",
             data: ds.data,
             itemStyle: { color },
-            emphasis: { focus: "series", itemStyle: { opacity: 1 } },
-            blur: { itemStyle: { opacity: 0.25 } },
         };
     });
 }
 // CALCULATE ZOOM RANGE BASED ON TIME/DATA
-export function get_zoom(tab, labels, datasets) {
+export function get_zoom(tab, labels) {
     if (tab !== "Today") return [inside(0, 100), slider(0, 100)];
 
     const total = labels.length;
-    const cur_hour = Math.floor((Date.now() + PHT_MS) / (60 * 60 * 1000)) % 24;
-    let first_slot = cur_hour;
+    if (total === 0) return [inside(0, 100), slider(0, 100)];
 
-    for (const ds of datasets) {
-        const i = ds.data.findIndex((v) => v > 0);
-        if (i !== -1) first_slot = Math.min(first_slot, i);
-    }
+    const now = new Date(
+        new Date().toLocaleString("en-US", { timeZone: TIMEZONE }),
+    ); // convert current UTC to Asia/Manila timezone
+    const minutes = now.getHours() * 60 + now.getMinutes();
+    const cur_slot = Math.floor(minutes / 10);
 
     const safe = Math.max(total - 1, 1);
+    const WINDOW = 12;
     const pad = 2;
-    const s = Math.round((Math.max(0, first_slot - pad) / safe) * 100);
-    const e = Math.round((Math.min(total - 1, cur_hour + pad) / safe) * 100);
+
+    const end_slot = Math.min(total - 1, cur_slot + pad);
+    const start_slot = Math.max(0, end_slot - WINDOW);
+
+    const s = Math.round((start_slot / safe) * 100);
+    const e = Math.round((end_slot / safe) * 100);
 
     return [inside(s, e), slider(s, e)];
 }
+
 // CREATE INSIDE ZOOM CONFIG
 function inside(start, end) {
     return { type: "inside", start, end };
@@ -108,16 +109,10 @@ function slider(start, end) {
     return {
         type: "slider",
         bottom: 10,
-        left: "10%",
-        right: "10%",
         height: 22,
         start,
         end,
-        showDetail: true,
-        showDataShadow: true,
-        handleSize: 22,
-        handleStyle: { color: "#fff", borderColor: "#3b82f6", borderWidth: 2 },
-        moveHandleSize: 6,
+        handleSize: 20,
         dataBackground: {
             lineStyle: { color: "rgba(148,163,184,0.35)", width: 1 },
             areaStyle: { color: "red" },

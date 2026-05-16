@@ -1,49 +1,45 @@
+export const TIMEZONE = "Asia/Manila";
+
 // date filtering utilities
-
-function get_pht_date() {
-
-    const now = new Date();
-    const phtOffset = 8 * 60 * 60 * 1000;
-    const pht = new Date(now.getTime() + phtOffset);
-    const pad = (n) => String(n).padStart(2, "0");
-
-    return {
-        year: pht.getUTCFullYear(),
-        month: pad(pht.getUTCMonth() + 1),
-        day: pad(pht.getUTCDate()),
-    };
-}
-
 export function get_today_range() {
-    const { year, month, day } = get_pht_date();
+    const now = new Date();
+
+    const phtNow = new Date(
+        now.toLocaleString("en-US", { timeZone: TIMEZONE }),
+    );
+
+    const start = new Date(phtNow);
+    start.setHours(0, 0, 0, 0);
+
+    const end = new Date(phtNow);
+    end.setHours(23, 59, 59, 999);
+
     return {
-        startISO: `${year}-${month}-${day}T00:00:00.000+08:00`,
-        endISO:   `${year}-${month}-${day}T23:59:59.999+08:00`,
+        startISO: start.toISOString(),
+        endISO: end.toISOString(),
     };
 }
 
 export function apply_today_range(query) {
     const { startISO, endISO } = get_today_range();
-    return query.gte("datetime", startISO).lt("datetime", endISO);
+    return query.gte("datetime", startISO).lte("datetime", endISO);
 }
 
 // Runs a callback when the next day starts
 export function schedule_daily_refresh(callback) {
     const now = new Date();
-    const phtOffset = 8 * 60 * 60 * 1000;
-    const phtNow = new Date(now.getTime() + phtOffset);
 
-    const phtMidnight = new Date(Date.UTC(
-        phtNow.getUTCFullYear(),
-        phtNow.getUTCMonth(),
-        phtNow.getUTCDate() + 1,
-        0, 0, 0, 0
-    ) - phtOffset);
+    const phtNow = new Date(
+        now.toLocaleString("en-US", { timeZone: TIMEZONE }),
+    );
 
-    const delay = phtMidnight - now;
+    const nextMidnight = new Date(phtNow);
+    nextMidnight.setHours(24, 0, 0, 0);
+
+    const delay = nextMidnight.getTime() - phtNow.getTime();
 
     setTimeout(() => {
         callback();
-        schedule_daily_refresh(callback); // callback reset
+        schedule_daily_refresh(callback);
     }, delay);
 }
